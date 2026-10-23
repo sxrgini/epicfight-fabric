@@ -126,7 +126,7 @@ public class ItemCapabilityReloadListener extends SimpleJsonResourceReloadListen
 	}
 
     private static void setSound(String location, Function<Holder<SoundEvent>, WeaponCapability.Builder> setter) {
-        ResourceLocation soundLocation = ResourceLocation.parse(location);
+        ResourceLocation soundLocation = ResourceLocation.parse(location.contains(":") ? location : "epicfight:" + location);
         Holder<SoundEvent> sound = BuiltInRegistries.SOUND_EVENT.getHolder(soundLocation).get();
         setter.apply(sound);
     }
@@ -218,7 +218,7 @@ public class ItemCapabilityReloadListener extends SimpleJsonResourceReloadListen
                 }
                 if (tag.contains("hit_particle"))
                 {
-                    ResourceLocation hitParticleLocation = ResourceLocation.parse(tag.getString("hit_particle"));
+                    ResourceLocation hitParticleLocation = ResourceLocation.parse(tag.getString("hit_particle").contains(":") ? tag.getString("hit_particle") : "epicfight:" + tag.getString("hit_particle"));
                     Holder<ParticleType<?>> hitParticle = BuiltInRegistries.PARTICLE_TYPE.getHolder(hitParticleLocation).get();
                     if (hitParticle.value() instanceof HitParticleType trueParticle)
                     {

@@ -22,9 +22,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import yesman.epicfight.platform.fabric.FabricHooks;
+import yesman.epicfight.platform.fabric.event.EntityAttributeModificationEvent;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
 import org.joml.Quaternionf;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.Animator;
@@ -39,7 +39,8 @@ import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.MobCombatBehaviors;
 import yesman.epicfight.mixin.common.MixinWitherBossAccessor;
@@ -113,7 +114,7 @@ public class WitherPatch extends MobPatch<WitherBoss> implements BossPatch<Withe
 		this.removeBossEventOwner(trackingPlayer);
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void entityPairing(SPEntityPairingPacket packet) {
 		super.entityPairing(packet);
 		
@@ -225,7 +226,7 @@ public class WitherPatch extends MobPatch<WitherBoss> implements BossPatch<Withe
 			}
 		}
 		
-		if (this.animator.getPlayerFor(null).getAnimation().equals(Animations.WITHER_CHARGE) && this.getEntityState().attacking() && EventHooks.canEntityGrief(this.original.level(), this.original)) {
+		if (this.animator.getPlayerFor(null).getAnimation().equals(Animations.WITHER_CHARGE) && this.getEntityState().attacking() && FabricHooks.canEntityGrief(this.original.level(), this.original)) {
 			int x = Mth.floor(this.original.getX());
 			int y = Mth.floor(this.original.getY());
 			int z = Mth.floor(this.original.getZ());
@@ -240,7 +241,7 @@ public class WitherPatch extends MobPatch<WitherBoss> implements BossPatch<Withe
 						BlockPos blockpos = new BlockPos(l2, l, i1);
 						BlockState blockstate = this.original.level().getBlockState(blockpos);
 						
-						if (blockstate.canEntityDestroy(this.original.level(), blockpos, this.original) && EventHooks.onEntityDestroyBlock(this.original, blockpos, blockstate)) {
+						if (WitherBoss.canDestroy(blockstate) && FabricHooks.onEntityDestroyBlock(this.original, blockpos, blockstate)) {
 							flag = this.original.level().destroyBlock(blockpos, true, this.original) || flag;
 						}
 					}

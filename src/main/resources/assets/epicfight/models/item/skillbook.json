@@ -1,7 +1,38 @@
 {
     "parent": "item/generated",
-    "textures":
-    {
-        "layer0" : "epicfight:item/skillbook"
-    }
+    "textures": {
+        "layer0": "epicfight:item/skillbook"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "epicfight:skill": 0.01
+            },
+            "model": "epicfight:item/skillbook_dodge"
+        },
+        {
+            "predicate": {
+                "epicfight:skill": 0.02
+            },
+            "model": "epicfight:item/skillbook_passive"
+        },
+        {
+            "predicate": {
+                "epicfight:skill": 0.05
+            },
+            "model": "epicfight:item/skillbook_guard"
+        },
+        {
+            "predicate": {
+                "epicfight:skill": 0.07
+            },
+            "model": "epicfight:item/skillbook_mover"
+        },
+        {
+            "predicate": {
+                "epicfight:skill": 0.08
+            },
+            "model": "epicfight:item/skillbook_identity"
+        }
+    ]
 }

@@ -13,7 +13,8 @@ import yesman.epicfight.api.animation.types.AttackAnimation;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class MultiLineCollider extends MultiCollider<LineCollider> {
 		super(arrayLength, posX, posY, posZ, LineCollider.getInitialAABB(posX, posY, posZ, vecX, vecY, vecZ));
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void draw(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, AttackAnimation animation, Joint joint, float prevElapsedTime, float elapsedTime, float partialTicks, float attackSpeed) {
 		int numberOf = Math.max(Math.round(this.numberOfColliders * attackSpeed), 1);
 		float partialScale = 1.0F / numberOf;
@@ -66,7 +67,7 @@ public class MultiLineCollider extends MultiCollider<LineCollider> {
 		}
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public RenderType getRenderType() {
 		return null;
 	}

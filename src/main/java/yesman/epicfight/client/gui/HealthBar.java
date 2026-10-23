@@ -19,7 +19,9 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.Tags.EntityTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.config.ClientConfig;
 import yesman.epicfight.config.ClientConfig.HealthBarVisibility;
@@ -41,7 +43,7 @@ public class HealthBar extends EntityUI {
 		
 		if (healthBarVisibility == HealthBarVisibility.NONE) {
 			return false;
-		} else if (entity.getType().is(EntityTypes.BOSSES)) {
+		} else if (entity.getType().is(TagKey.create(Registries.ENTITY_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "bosses")))) {
 			return false;
 		}
 		

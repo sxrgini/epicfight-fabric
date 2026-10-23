@@ -11,7 +11,8 @@ import yesman.epicfight.api.animation.property.AnimationProperty.AttackPhaseProp
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.skill.SkillContainer;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
@@ -53,7 +54,7 @@ public class GuillotineAxeSkill extends SimpleWeaponInnateSkill {
         );
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Component> getTooltipOnItem(ItemStack itemstack, CapabilityItem cap, PlayerPatch<?> playerpatch) {
         List<Component> list = new ArrayList<> ();
         List<Object> tooltipArgs = new ArrayList<> ();

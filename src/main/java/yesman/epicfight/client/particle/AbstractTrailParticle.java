@@ -159,9 +159,8 @@ public abstract class AbstractTrailParticle<T extends EntityPatch<?>> extends Te
 		}
 	}
 	
-	@Override
 	public AABB getRenderBoundingBox(float partialTicks) {
-        return AABB.INFINITE;
+        return new net.minecraft.world.phys.AABB(-3.0E7D,-3.0E7D,-3.0E7D,3.0E7D,3.0E7D,3.0E7D);
     }
 	
 	@Override
@@ -204,7 +203,7 @@ public abstract class AbstractTrailParticle<T extends EntityPatch<?>> extends Te
 		} else {
 			int i = Mth.clamp(Math.max(this.trailInfo.skyLight(), level.getBrightness(LightLayer.SKY, pos)), 0, 15);
 			int j = Mth.clamp(Math.max(this.trailInfo.blockLight(), level.getBrightness(LightLayer.BLOCK, pos)), 0, 15);
-			int k = state.getLightEmission(level, pos);
+			int k = state.getLightEmission();
 			
 			if (j < k) {
 				j = k;

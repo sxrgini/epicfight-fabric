@@ -28,10 +28,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.NeoForgeConfig;
-import net.neoforged.neoforge.event.EventHooks;
+import yesman.epicfight.platform.fabric.FabricHooks;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import yesman.epicfight.api.animation.*;
@@ -86,7 +83,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@EventBusSubscriber(modid = EpicFightMod.MODID)
 public class Animations {
     public static DirectStaticAnimation EMPTY_ANIMATION = new DirectStaticAnimation() {
         @Override
@@ -446,7 +442,6 @@ public class Animations {
     public static AnimationAccessor<OffAnimation> OFF_ANIMATION_MIDDLE;
     public static AnimationAccessor<OffAnimation> OFF_ANIMATION_LOWEST;
 
-    @SubscribeEvent
     public static void registerAnimations(AnimationRegistryEvent event) {
         event.newBuilder(EpicFightMod.MODID, Animations::build);
     }
@@ -1904,7 +1899,7 @@ public class Animations {
                                         }
                                     });
 
-                                    Level.ExplosionInteraction explosion$blockinteraction = EventHooks.canEntityGrief(witherboss.level(), witherboss) ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE;
+                                    Level.ExplosionInteraction explosion$blockinteraction = FabricHooks.canEntityGrief(witherboss.level(), witherboss) ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE;
                                     witherboss.level().explode(witherboss, hitLocation.x, hitLocation.y, hitLocation.z, 0.0F, false, explosion$blockinteraction);
                                 }
                             }
@@ -2354,8 +2349,7 @@ public class Animations {
                     LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(level);
                     lightningbolt.setVisualOnly(true);
                     lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
-                    lightningbolt.setDamage(0.0F);
-                    lightningbolt.setCause(entitypatch instanceof ServerPlayerPatch serverPlayerPatch ? serverPlayerPatch.getOriginal() : null);
+                                        lightningbolt.setCause(entitypatch instanceof ServerPlayerPatch serverPlayerPatch ? serverPlayerPatch.getOriginal() : null);
 
                     DamageSource dmgSource = new DamageSource(e.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.LIGHTNING_BOLT), entitypatch.getOriginal());
                     EpicFightDamageSource damageSource = attackAnimation.getEpicFightDamageSource(dmgSource, entitypatch, e, phase).setUsedItem(entitypatch.getOriginal().getItemInHand(InteractionHand.MAIN_HAND));
@@ -2418,8 +2412,8 @@ public class Animations {
                 direction = Direction.UP;
             }
 
-            if (NeoForgeConfig.SERVER.fullBoundingBoxLadders.get()) {
-                if (bs.isLadder(level, bp, original)) {
+            if (false) {
+                if (bs.is(net.minecraft.tags.BlockTags.CLIMBABLE)) {
                     if (bs.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                         direction = bs.getValue(BlockStateProperties.HORIZONTAL_FACING);
                     } else {
@@ -2447,7 +2441,7 @@ public class Animations {
                         for (int z2 = mZ; z2 < bb.maxZ; z2++) {
                             BlockPos tmp = new BlockPos(x2, y2, z2);
                             bs = level.getBlockState(tmp);
-                            if (bs.isLadder(level, tmp, original)) {
+                            if (bs.is(net.minecraft.tags.BlockTags.CLIMBABLE)) {
                                 if (bs.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                                     direction = bs.getValue(BlockStateProperties.HORIZONTAL_FACING);
                                 } else {
@@ -2527,7 +2521,7 @@ public class Animations {
 
         public static final AnimationEvent.E0 PLAY_STEPPING_SOUND = (entitypatch, animation, params) -> {
             BlockState state = entitypatch.getLevel().getBlockState(entitypatch.getOriginal().getOnPos());
-            entitypatch.playSound(state.getSoundType(entitypatch.getLevel(), entitypatch.getOriginal().blockPosition(), entitypatch.getOriginal()).getHitSound(), 0, 0);
+            entitypatch.playSound(state.getSoundType().getHitSound(), 0, 0);
         };
 
         public static final AnimationEvent.E0 TELEPORT_ATTACK_SERVER = (entitypatch, self, param) -> {

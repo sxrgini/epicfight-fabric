@@ -158,5 +158,20 @@ public final class VanillaPlayerEventHooks {
         return false;
     }
 
+    /// Called when a living entity is about to start using an item in a hand
+    ///
+    /// @see net.minecraft.world.entity.LivingEntity#startUsingItem
+    ///
+    /// @return whether cancel the event
+    public static boolean onStartUsingItem(net.minecraft.world.entity.LivingEntity entity, InteractionHand hand) {
+        return EpicFightCapabilities.getPlayerPatchAsOptional(entity).map(playerpatch -> {
+            if (!playerpatch.getEntityState().canUseItem()) {
+                return true;
+            }
+
+            return hand == InteractionHand.OFF_HAND && !playerpatch.getHoldingItemCapability(InteractionHand.MAIN_HAND).getStyle(playerpatch).canUseOffhand();
+        }).orElse(false);
+    }
+
     private VanillaPlayerEventHooks() {}
 }

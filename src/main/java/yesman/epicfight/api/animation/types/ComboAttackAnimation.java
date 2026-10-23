@@ -16,7 +16,8 @@ import yesman.epicfight.api.client.input.PlayerInputState;
 import yesman.epicfight.api.collider.Collider;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.datastructure.ParameterizedHashMap;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -135,7 +136,7 @@ public class ComboAttackAnimation extends AttackAnimation {
 		return true;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean shouldPlayerMove(LocalPlayerPatch playerpatch) {
 		if (playerpatch.isLogicalClient()) {
             return EpicFightGameRules.STIFF_COMBO_ATTACKS.getRuleValue(playerpatch.getOriginal().level());
@@ -144,7 +145,7 @@ public class ComboAttackAnimation extends AttackAnimation {
 		return true;
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     private static boolean isPlayerMoving(LocalPlayerPatch localPlayerPatch) {
         final PlayerInputState inputState = InputManager.getInputState(localPlayerPatch.getOriginal());
         return inputState.forwardImpulse() != 0.0F || inputState.leftImpulse() != 0.0F;

@@ -1,5 +1,7 @@
 package yesman.epicfight.api.utils;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -26,7 +28,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.ClientHooks;
+import yesman.epicfight.platform.fabric.client.FabricClientHooks;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import yesman.epicfight.api.animation.Pose;
@@ -110,7 +112,7 @@ public class EntitySnapshot<T extends LivingEntityPatch<?>> {
 				return;
 			}
 			
-			EquipmentSlot armorSlot = itemstack.getEquipmentSlot();
+			EquipmentSlot armorSlot = NeoCompat.equipmentSlot(itemstack);
 			SkinnedMesh armor = WearableItemLayer.getCachedModel(itemstack.getItem());
 			ResourceLocation texture = WearableItemLayer.getArmorResource(entitypatch.getOriginal(), itemstack, armorSlot, null);
 			
@@ -176,10 +178,10 @@ public class EntitySnapshot<T extends LivingEntityPatch<?>> {
 				
 				if (!bakedmodel.isCustomRenderer()) {
 					MathUtils.mulStack(poseStack, RenderEngine.getInstance().getItemRenderer(itemstack).getCorrectionMatrix(this.entitypatch, items.getFirst(), this.poseMatrices));
-					bakedmodel = ClientHooks.handleCameraTransforms(poseStack, bakedmodel, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, false);
+					bakedmodel = FabricClientHooks.handleCameraTransforms(poseStack, bakedmodel, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, false);
 					poseStack.translate(-0.5F, -0.5F, -0.5F);
 					
-					for (var model : bakedmodel.getRenderPasses(itemstack, true)) {
+					for (var model : java.util.List.of(bakedmodel)) {
 						renderModelLists(model, itemstack, packedLight, OverlayTexture.NO_OVERLAY, alpha, poseStack, buffers.getBuffer(rendertype), drawingFunction);
 					}
 				}
@@ -232,7 +234,7 @@ public class EntitySnapshot<T extends LivingEntityPatch<?>> {
 			int i = -1;
 			
 			if (flag && bakedquad.isTinted()) {
-				i = Minecraft.getInstance().getItemColors().getColor(pItemStack, bakedquad.getTintIndex());
+				i = Minecraft.getInstance().itemColors.getColor(pItemStack, bakedquad.getTintIndex());
 			}
 			
 			float f = (float) (i >> 16 & 255) / 255.0F;

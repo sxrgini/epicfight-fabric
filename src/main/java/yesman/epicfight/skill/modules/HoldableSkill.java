@@ -3,7 +3,8 @@ package yesman.epicfight.skill.modules;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.nbt.CompoundTag;
 import yesman.epicfight.api.client.input.action.EpicFightInputAction;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.network.server.SPSkillFeedback;
 import yesman.epicfight.skill.Skill;
@@ -25,7 +26,7 @@ public interface HoldableSkill {
 
     default void resetHolding(SkillContainer container) {}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     default void gatherHoldArguments(SkillContainer container, ControlEngine controlEngine, CompoundTag arguments) {}
     
     /// Gives the normal skill object of this [HoldableSkill] object.
@@ -49,6 +50,6 @@ public interface HoldableSkill {
     /// @see EpicFightInputAction
     /// @see ControlEngine#mapKeyMappingToAction
     @SuppressWarnings({"JavadocReference"})
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     KeyMapping getKeyMapping();
 }

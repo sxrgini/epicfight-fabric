@@ -12,7 +12,8 @@ import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.LevelUtil;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.screen.SkillBookScreen;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.registry.entries.EpicFightSkillDataKeys;
@@ -148,7 +149,7 @@ public class MeteorSlamSkill extends Skill {
 		return this.slamMotions.keySet();
 	}
 
-	@ClientOnly @Override
+	@Environment(EnvType.CLIENT) @Override
 	public boolean getCustomConsumptionTooltips(SkillBookScreen.AttributeIconList consumptionList) {
 		consumptionList.add(Component.translatable("attribute.name.epicfight.stamina.consume.tooltip"), Component.translatable("skill.epicfight.meteor_slam.consume.tooltip"), SkillBookScreen.STAMINA_TEXTURE_INFO);
 		return true;

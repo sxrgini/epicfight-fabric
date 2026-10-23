@@ -4,7 +4,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.Entity;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.RenderEngine;
 import yesman.epicfight.network.EntityPairingPacketTypes;
 import yesman.epicfight.network.EpicFightNetworkManager;
@@ -37,7 +38,7 @@ public interface BossPatch<T extends Entity> {
 		return (P)this;
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	default void processOwnerRecordPacket(FriendlyByteBuf buffer) {
 		boolean addOperation = buffer.readBoolean();
 		UUID eventUUID = buffer.readUUID();

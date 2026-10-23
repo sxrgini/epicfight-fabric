@@ -28,7 +28,8 @@ import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.IdentifierProvider;
 import yesman.epicfight.api.event.types.player.SkillCancelEvent;
 import yesman.epicfight.api.event.types.player.SkillCastEvent;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.client.gui.screen.SkillBookScreen;
@@ -165,17 +166,17 @@ public abstract class Skill implements IdentifierProvider {
 	/// Fired when the player failed at casting the skill since of validation failed.
     ///
     /// Notify which state caused validation fail via screen messages, custom UI, chats, etc
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public void validationFeedback(SkillContainer container) {
 	}
 
 	/// Returns a skill cast request packet to send to the server
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public CustomPacketPayload getExecutionPacket(SkillContainer container, @Nullable CompoundTag args) {
 		return new CPSkillRequest(container.getSlot(), CPSkillRequest.WorkType.CAST, args);
 	}
 
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public void gatherArguments(SkillContainer container, ControlEngine controlEngine, CompoundTag arguments) {
 	}
 
@@ -216,7 +217,7 @@ public abstract class Skill implements IdentifierProvider {
 	}
 
 	/// Instant feedback when the skill is casted successfully
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void executeOnClient(SkillContainer container, CompoundTag args) {
 	}
 
@@ -226,7 +227,7 @@ public abstract class Skill implements IdentifierProvider {
     /// skills by user defined behaviors. Epic Fight API provides some automated skill cancel, but it's not forced.
     ///
     /// Use this method to clear any activation states
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void cancelOnClient(SkillContainer container, CompoundTag args) {
 		LocalPlayerPatch executor = container.getClientExecutor();
 		SkillCancelEvent skillCancelEvent = new SkillCancelEvent(executor, container);
@@ -270,12 +271,12 @@ public abstract class Skill implements IdentifierProvider {
     ///
     /// Use [#onInitiateClient] if the skill has some synchronize state based on [SkillDataKey] or
     /// some client initialization code that is inaccessible in a dedicated server.
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void onInitiateClient(SkillContainer container) {
 	}
 
 	/// Clear the states defined by [#onInitiateClient]
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void onRemoveClient(SkillContainer container) {
         // Removes all components created by this skill
         container.getExecutor().getEntityDecorations().removeAll(this);
@@ -480,30 +481,30 @@ public abstract class Skill implements IdentifierProvider {
 		return this;
 	}
 
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public void onScreen(LocalPlayerPatch playerpatch, float resolutionX, float resolutionY) {
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public List<Component> getTooltipOnItem(ItemStack itemStack, CapabilityItem cap, PlayerPatch<?> playerpatch) {
 		return new ArrayList<> ();
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public List<Object> getTooltipArgsOfScreen(List<Object> list) {
 		return list;
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public ResourceLocation getSkillTexture() {
 		return ResourceLocation.fromNamespaceAndPath(this.getRegistryName().getNamespace(), String.format("textures/gui/skills/%s/%s.png", this.category.toString().toLowerCase(Locale.ROOT), this.getRegistryName().getPath()));
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public boolean shouldDraw(SkillContainer container) {
 		return false;
 	}
@@ -538,7 +539,7 @@ public abstract class Skill implements IdentifierProvider {
 		return null;
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public boolean getCustomConsumptionTooltips(SkillBookScreen.AttributeIconList consumeIconList) {
 		return false;
 	}

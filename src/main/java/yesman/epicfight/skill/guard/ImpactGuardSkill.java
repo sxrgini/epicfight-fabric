@@ -12,7 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.commons.compress.utils.Lists;
 import yesman.epicfight.api.event.types.entity.TakeDamageEvent;
 import yesman.epicfight.api.utils.AttackResult;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.registry.entries.EpicFightParticles;
 import yesman.epicfight.registry.entries.EpicFightSkills;
@@ -147,7 +148,7 @@ public class ImpactGuardSkill extends GuardSkill {
 		return true;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public List<Object> getTooltipArgsOfScreen(List<Object> list) {
 		list.add(String.format("%.1f", this.damageReducer * 100.0D));
 		

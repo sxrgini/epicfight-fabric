@@ -19,7 +19,8 @@ import org.lwjgl.opengl.GL11;
 import yesman.epicfight.api.animation.property.AnimationProperty.AttackPhaseProperty;
 import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.api.utils.math.Vec2f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.registry.entries.EpicFightAttributes;
 import yesman.epicfight.skill.Skill;
@@ -252,12 +253,12 @@ public abstract class WeaponInnateSkill extends Skill {
 		new Vec2f(1.0F, 0.0F)
 	};
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean shouldDraw(SkillContainer container) {
 		return true;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
 		boolean creative = container.getExecutor().getOriginal().isCreative();
 		boolean fullstack = creative || container.isFull();
@@ -361,17 +362,17 @@ public abstract class WeaponInnateSkill extends Skill {
         if (container.isActivated() && (container.getSkill().getActivateType() == ActivateType.DURATION || container.getSkill().getActivateType() == ActivateType.DURATION_INFINITE)) {
 			String s = String.format("%.0f", container.getRemainDuration() / 20.0F);
 			int stringWidth = (gui.getFont().width(s) - 6) / 3;
-			guiGraphics.drawString(gui.getFont(), s, x + 13 - stringWidth, y + 13, 16777215, true);
+			yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), s, x + 13 - stringWidth, y + 13, 16777215, true);
 		} else if (!fullstack) {
 			String s = String.valueOf((int)(cooldownRatio * 100.0F));
 			int stringWidth = (gui.getFont().width(s) - 6) / 3;
-			guiGraphics.drawString(gui.getFont(), s, x + 13 - stringWidth, y + 13, 16777215, true);
+			yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), s, x + 13 - stringWidth, y + 13, 16777215, true);
 		}
 		
 		if (container.getSkill().getMaxStack() > 1) {
 			String s = String.valueOf(container.getStack());
 			int stringWidth = (gui.getFont().width(s) - 6) / 3;
-			guiGraphics.drawString(gui.getFont(), s, x + 25 - stringWidth, y + 22, 16777215, true);
+			yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), s, x + 25 - stringWidth, y + 22, 16777215, true);
 		}
 		
 		RenderSystem.disableBlend();

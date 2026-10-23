@@ -72,11 +72,8 @@ public class AnchoredButton extends Button implements AnchoredWidget, ThemeAppli
         this.renderString(guiGraphics, Minecraft.getInstance().font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
-    @Override
     public int getFGColor() {
-        if (this.packedFGColor != -1) {
-            return this.packedFGColor;
-        } else {
+        {
             return this.highlightWhen.apply(this) ? 0xFFFFFFFF : this.active ? 0xFFB6B6B6 : 0xFF1A1A1A;
         }
     }

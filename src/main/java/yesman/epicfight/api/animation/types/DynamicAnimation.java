@@ -13,7 +13,8 @@ import yesman.epicfight.api.animation.types.EntityState.StateFactor;
 import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.client.animation.property.JointMaskEntry;
 import yesman.epicfight.api.utils.datastructure.ParameterizedMap;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.main.EpicFightSharedConstants;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -85,7 +86,7 @@ public abstract class DynamicAnimation {
         return this.getTransfroms().containsKey(joint);
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public Optional<JointMaskEntry> getJointMaskEntry(LivingEntityPatch<?> entitypatch, boolean useCurrentMotion) {
         return Optional.empty();
     }
@@ -185,7 +186,7 @@ public abstract class DynamicAnimation {
         return false;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
     }
 }

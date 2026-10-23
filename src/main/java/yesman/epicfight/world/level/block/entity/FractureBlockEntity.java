@@ -7,7 +7,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.registry.entries.EpicFightBlockEntities;
 import yesman.epicfight.registry.entries.EpicFightParticles;
 import yesman.epicfight.world.level.block.FractureBlockState;
@@ -62,10 +63,10 @@ public class FractureBlockEntity extends BlockEntity {
         return ++this.lifeTime;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public static void lifeTimeTick(Level level, BlockPos blockPos, BlockState blockState, FractureBlockEntity fractureBlockEntity) {
         if (fractureBlockEntity.getOriginalBlockState().shouldSpawnTerrainParticles() && fractureBlockEntity.getMaxLifeTime() - fractureBlockEntity.getLifeTime() < 10) {
-            level.addParticle(new BlockParticleOption(EpicFightParticles.GROUND_FRACTURE.get(), fractureBlockEntity.getOriginalBlockState()).setPos(blockPos), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.0, 0.0, 0.0);
+            level.addParticle(new BlockParticleOption(EpicFightParticles.GROUND_FRACTURE.get(), fractureBlockEntity.getOriginalBlockState()), blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0.0, 0.0, 0.0);
         }
 
         if (fractureBlockEntity.increaseAndGetLifeTime() > fractureBlockEntity.getMaxLifeTime()) {

@@ -16,7 +16,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
+import yesman.epicfight.platform.fabric.event.EntityAttributeModificationEvent;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.Animator;
 import yesman.epicfight.api.animation.JointTransform;
@@ -31,7 +31,8 @@ import yesman.epicfight.api.event.IdentifierProvider;
 import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.MobCombatBehaviors;
 import yesman.epicfight.main.EpicFightMod;
@@ -91,7 +92,7 @@ public class EndermanPatch extends MobPatch<EnderMan> {
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void entityPairing(SPEntityPairingPacket packet) {
         super.entityPairing(packet);
 

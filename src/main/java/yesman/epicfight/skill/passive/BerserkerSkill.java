@@ -10,7 +10,8 @@ import org.joml.Vector4f;
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.skill.SkillBuilder;
 import yesman.epicfight.skill.SkillContainer;
@@ -33,7 +34,7 @@ public class BerserkerSkill extends PassiveSkill {
         this.damageBonus = parameters.getFloat("damage_bonus");
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void onInitiateClient(SkillContainer container) {
         Player player = container.getExecutor().getOriginal();
 
@@ -100,7 +101,7 @@ public class BerserkerSkill extends PassiveSkill {
         );
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public boolean shouldDraw(SkillContainer container) {
         Player player = container.getExecutor().getOriginal();
         float health = player.getHealth();
@@ -108,7 +109,7 @@ public class BerserkerSkill extends PassiveSkill {
         return (maxHealth - health) > 0.0F;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
         guiGraphics.blit(this.getSkillTexture(), (int)x, (int)y, 24, 24, 0, 0, 1, 1, 1, 1);
         Player player = container.getExecutor().getOriginal();
@@ -116,10 +117,10 @@ public class BerserkerSkill extends PassiveSkill {
         float maxHealth = player.getMaxHealth();
         float lostHealthPercentage = (maxHealth - health) / maxHealth;
         lostHealthPercentage = (float)Math.floor(lostHealthPercentage * 100.0F);
-        guiGraphics.drawString(gui.getFont(), String.format("%.0f%%", lostHealthPercentage), x + 4, y + 6, 16777215, true);
+        yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.format("%.0f%%", lostHealthPercentage), x + 4, y + 6, 16777215, true);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Object> getTooltipArgsOfScreen(List<Object> list) {
         list.add(String.format("%.1f", this.speedBonus));
         list.add(String.format("%.1f", this.damageBonus));

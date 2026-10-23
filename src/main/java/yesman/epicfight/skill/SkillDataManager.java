@@ -3,10 +3,12 @@ package yesman.epicfight.skill;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
 import org.jetbrains.annotations.ApiStatus;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.network.EpicFightNetworkManager;
+import yesman.epicfight.registry.EpicFightRegistries;
 import yesman.epicfight.network.client.CPHandleSkillData;
 import yesman.epicfight.network.server.SPHandleSkillData;
 
@@ -24,12 +26,22 @@ public class SkillDataManager {
 		this.container = container;
 	}
 	
+	/// Normalizes any holder (e.g. a [DeferredHolder]) to the registry's own reference holder, since the data map
+	/// is keyed by identity-hashed reference holders.
+	private static Holder<SkillDataKey<?>> norm(Holder<SkillDataKey<?>> key) {
+		if (key instanceof Holder.Reference<SkillDataKey<?>>) {
+			return key;
+		}
+		
+		return key.unwrapKey().flatMap(EpicFightRegistries.SKILL_DATA_KEY::getHolder).map(ref -> (Holder<SkillDataKey<?>>)ref).orElse(key);
+	}
+	
 	public void registerData(Holder<SkillDataKey<?>> key) {
 		if (this.hasData(key)) {
 			throw new IllegalStateException(key + " is already registered!");
 		}
 		
-		this.data.put(key, key.value().defaultValue());
+		this.data.put(norm(key), key.value().defaultValue());
 	}
 	
 	public void transferDataTo(SkillDataManager dest) {
@@ -37,7 +49,7 @@ public class SkillDataManager {
 	}
 	
 	public void removeData(Holder<SkillDataKey<?>> key) {
-		this.data.remove(key);
+		this.data.remove(norm(key));
 	}
 	
 	public Set<Holder<SkillDataKey<?>>> keySet() {
@@ -49,11 +61,11 @@ public class SkillDataManager {
 	 */
 	@ApiStatus.Internal
 	public void setDataRawtype(Holder<SkillDataKey<?>> key, Object data) {
-		if (!this.data.containsKey(key)) {
+		if (!this.data.containsKey(norm(key))) {
 			throw new IllegalStateException(key + " is unregistered.");
 		}
 		
-		this.data.put(key, data);
+		this.data.put(norm(key), data);
 	}
 	
 	public <T> void setData(DeferredHolder<SkillDataKey<?>, ? extends SkillDataKey<T>> key, T data) {
@@ -94,7 +106,7 @@ public class SkillDataManager {
 		}
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	private <T> void syncLocalPlayerData(DeferredHolder<SkillDataKey<?>, ? extends SkillDataKey<T>> key, LocalPlayer player) {
 		CPHandleSkillData msg = new CPHandleSkillData(this.container.getSlot(), key);
 		key.value().encode(msg.buffer(), this.getDataValue(key));
@@ -115,21 +127,21 @@ public class SkillDataManager {
 	
 	@SuppressWarnings("unchecked")
 	public <T> T getDataValue(DeferredHolder<SkillDataKey<?>, ? extends SkillDataKey<T>> key) {
-		return this.hasData(key) ? (T)this.data.get(key) : null;
+		return this.hasData(key) ? (T)this.data.get(norm(key)) : null;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getDataValueOptional(DeferredHolder<SkillDataKey<?>, ? extends SkillDataKey<T>> key) {
-		return Optional.ofNullable((T)this.data.get(key));
+		return Optional.ofNullable((T)this.data.get(norm(key)));
 	}
 	
 	@ApiStatus.Internal
 	public Object getRawDataValue(Holder<SkillDataKey<?>> key) {
-		return this.data.get(key);
+		return this.data.get(norm(key));
 	}
 	
 	public boolean hasData(Holder<SkillDataKey<?>> key) {
-		return this.data.containsKey(key);
+		return this.data.containsKey(norm(key));
 	}
 	
 	public void clearData() {

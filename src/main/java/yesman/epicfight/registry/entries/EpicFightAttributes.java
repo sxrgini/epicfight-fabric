@@ -10,12 +10,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import yesman.epicfight.platform.fabric.event.EntityAttributeCreationEvent;
+import yesman.epicfight.platform.fabric.event.EntityAttributeModificationEvent;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
+import yesman.epicfight.platform.fabric.registry.DeferredRegister;
 import yesman.epicfight.EpicFight;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.world.capabilities.entitypatch.boss.WitherGhostPatch;
@@ -84,18 +82,15 @@ public final class EpicFightAttributes {
 		return new AttributeModifier(ATTACK_SPEED_MODIFIER, value, AttributeModifier.Operation.ADD_VALUE);
 	}
 	
-	@EventBusSubscriber(modid = EpicFightMod.MODID)
 	public static final class EventBus {
 		private EventBus() {}
 		
-		@SubscribeEvent
 		public static void entityAttributeCreationEvent(EntityAttributeCreationEvent event) {
 			event.put(EpicFightEntityTypes.WITHER_SKELETON_MINION.get(), AbstractSkeleton.createAttributes().build());
 			event.put(EpicFightEntityTypes.WITHER_GHOST_CLONE.get(), WitherGhostClone.createAttributes().build());
 			event.put(EpicFightEntityTypes.DODGE_LOCATION_INDICATOR.get(), LivingEntity.createLivingAttributes().build());
 		}
 		
-		@SubscribeEvent
 		public static void entityAttributeModificationEvent(EntityAttributeModificationEvent event) {
 			common(EntityType.CAVE_SPIDER, event);
 			common(EntityType.EVOKER, event);

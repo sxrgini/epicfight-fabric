@@ -1,0 +1,102 @@
+plugins {
+    id 'fabric-loom' version '1.13.6'
+    id 'maven-publish'
+    id 'dev.echoellet.mc-safe-resources' version '0.0.2'
+}
+
+mcSafeResources {
+    namespace.set(project.mod_id)
+    outputPackage.set("yesman.${project.mod_id}.generated")
+}
+
+sourceSets.main.java.srcDirs(
+    tasks.named('generateLangKeys').map { it.outputs.files.singleFile },
+    tasks.named('generateSoundKeys').map { it.outputs.files.singleFile }
+)
+
+tasks.named('compileJava') { dependsOn tasks.named('generateLangKeys'), tasks.named('generateSoundKeys') }
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+    exclude '.cache'
+}
+
+version = project.mod_version
+group = project.group_id
+
+base {
+    archivesName = project.archives_base_name
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.fabricmc.net/' }
+    maven { url = 'https://maven.parchmentmc.org' }
+    flatDir { dirs 'libs' }
+    maven { name = 'TerraformersMC'; url = 'https://maven.terraformersmc.com/' }
+    maven { name = 'Xander'; url = 'https://maven.isxander.dev/releases' }
+    maven { name = 'Xander Snapshots'; url = 'https://maven.isxander.dev/snapshots' }
+    exclusiveContent {
+        forRepository { maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+    exclusiveContent {
+        forRepository { maven { name = 'ForgeConfigAPIPort'; url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/' } }
+        filter { includeGroup 'fuzs.forgeconfigapiport' }
+    }
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/epicfight.accesswidener')
+    runs {
+        client { client(); ideConfigGenerated(true) }
+        server { server(); ideConfigGenerated(true) }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    modImplementation "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forgeconfigapiport_version}"
+    include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forgeconfigapiport_version}"
+
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'org.checkerframework:checker-qual:3.42.0'
+
+    modCompileOnly "com.terraformersmc:modmenu:11.0.0"
+    modCompileOnly("dev.isxander:controlify:2.4.4+1.21.1-fabric") { transitive = false }
+}
+
+processResources {
+    def props = [
+        version: project.version,
+        minecraft_version: project.minecraft_version,
+        loader_version: project.loader_version,
+    ]
+    inputs.properties props
+    filesMatching('fabric.mod.json') { expand props }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    options.compilerArgs += ['-Xmaxerrs', '5000']
+}
+
+jar {
+    from('LICENSE') { rename { "${it}_${project.archives_base_name}" } }
+    from('LICENSE-ASSETS')
+}

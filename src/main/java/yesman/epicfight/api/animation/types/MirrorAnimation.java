@@ -10,7 +10,8 @@ import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.client.animation.Layer;
 import yesman.epicfight.api.client.animation.property.ClientAnimationProperties;
 import yesman.epicfight.api.model.Armature;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.List;
@@ -111,12 +112,12 @@ public class MirrorAnimation extends StaticAnimation {
 		return true;
 	}
 
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public Layer.Priority getPriority() {
 		return this.original.getProperty(ClientAnimationProperties.PRIORITY).orElse(Layer.Priority.LOWEST);
 	}
 
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public Layer.LayerType getLayerType() {
 		return this.original.getProperty(ClientAnimationProperties.LAYER_TYPE).orElse(Layer.LayerType.BASE_LAYER);
 	}

@@ -17,7 +17,8 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import yesman.epicfight.api.utils.ParseUtil;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.network.server.SPDatapackSync;
 
@@ -104,7 +105,7 @@ public class ItemKeywordReloadListener extends SimplePreparableReloadListener<Ma
 		return COMPOUNDS.stream();
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public static void handleClientBoundSyncPacket(SPDatapackSync packet) {
 		if (packet.packetType() == SPDatapackSync.PacketType.WEAPON_TYPE) {
 			REGEXES.clear();

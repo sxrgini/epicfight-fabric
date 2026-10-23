@@ -10,7 +10,8 @@ import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.types.animation.StartActionEvent;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.datastructure.ParameterizedHashMap;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 
@@ -69,7 +70,7 @@ public class MainFrameAnimation extends StaticAnimation {
         return true;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public Layer.Priority getPriority() {
         return this.getProperty(ClientAnimationProperties.PRIORITY).orElse(Layer.Priority.HIGHEST);
     }

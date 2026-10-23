@@ -21,13 +21,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.neoforge.entity.PartEntity;
-import net.neoforged.neoforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import yesman.epicfight.platform.fabric.event.SimpleEventBus;
+import yesman.epicfight.platform.fabric.event.LivingJumpEvent;
+import yesman.epicfight.platform.fabric.client.FabricClientHooks;
+import yesman.epicfight.platform.fabric.client.event.ClientTickEvent;
+import yesman.epicfight.platform.fabric.client.event.InputEvent;
+import yesman.epicfight.platform.fabric.client.event.MovementInputUpdateEvent;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -387,7 +387,7 @@ public class ControlEngine implements IEventBasedEngine {
         final EpicFightInputAction epicFightAttack = EpicFightInputAction.ATTACK;
 
         boolean shouldPlayAttackAnimation = this.playerpatch.canPlayAttackAnimation();
-        if (vanillaAttack.keyMapping().getKey() == epicFightAttack.keyMapping().getKey() &&
+        if (FabricClientHooks.keyOf(vanillaAttack.keyMapping()) == FabricClientHooks.keyOf(epicFightAttack.keyMapping()) &&
                 Minecraft.getInstance().hitResult != null && shouldPlayAttackAnimation) {
             // Not needed for controller inputs.
             // This is called for keyboard/mouse inputs to just reset the internal keymapping counter.
@@ -511,7 +511,9 @@ public class ControlEngine implements IEventBasedEngine {
             this.minecraft.gui.getChat().addMessage(Component.translatable("epicfight.messages.mode_switching_disabled").withStyle(ChatFormatting.RED));
             return;
         }
-        this.playerpatch.toggleMode();
+        if (!yesman.epicfight.tweaks.EpicTweaks.toggleMode(this.playerpatch)) {
+            this.playerpatch.toggleMode();
+        }
     }
 
     private void toggleLockOnState() {
@@ -628,10 +630,10 @@ public class ControlEngine implements IEventBasedEngine {
 	@SuppressWarnings({"JavadocReference", "DeprecatedIsStillUsed"})
     @Deprecated(forRemoval = true)
     public static boolean isKeyDown(KeyMapping key) {
-		if (key.getKey().getType() == InputConstants.Type.KEYSYM) {
-			return key.isDown() || GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue()) > 0;
-		} else if(key.getKey().getType() == InputConstants.Type.MOUSE) {
-			return key.isDown() || GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), key.getKey().getValue()) > 0;
+		if (FabricClientHooks.keyOf(key).getType() == InputConstants.Type.KEYSYM) {
+			return key.isDown() || GLFW.glfwGetKey(Minecraft.getInstance().getWindow().getWindow(), FabricClientHooks.keyOf(key).getValue()) > 0;
+		} else if(FabricClientHooks.keyOf(key).getType() == InputConstants.Type.MOUSE) {
+			return key.isDown() || GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().getWindow(), FabricClientHooks.keyOf(key).getValue()) > 0;
 		} else {
 			return false;
 		}
@@ -655,8 +657,8 @@ public class ControlEngine implements IEventBasedEngine {
 		boolean consumes = key.consumeClick();
 
 		if (consumes && eventCheck) {
-			int mouseButton = InputConstants.Type.MOUSE == key.getKey().getType() ? key.getKey().getValue() : -1;
-			InputEvent.InteractionKeyMappingTriggered inputEvent = ClientHooks.onClickInput(mouseButton, key, InteractionHand.MAIN_HAND);
+			int mouseButton = InputConstants.Type.MOUSE == FabricClientHooks.keyOf(key).getType() ? FabricClientHooks.keyOf(key).getValue() : -1;
+			InputEvent.InteractionKeyMappingTriggered inputEvent = FabricClientHooks.onClickInput(mouseButton, key, InteractionHand.MAIN_HAND);
 
 	        if (inputEvent.isCanceled()) {
 	        	return false;
@@ -1041,7 +1043,7 @@ public class ControlEngine implements IEventBasedEngine {
             if (
                 !EpicFightGameRules.ALLOW_VANILLA_MELEE.getRuleValue(playerpatch.getOriginal().level()) &&
                     this.minecraft.hitResult instanceof EntityHitResult entityHitResult &&
-                    (entityHitResult.getEntity() instanceof LivingEntity || entityHitResult.getEntity() instanceof PartEntity)
+                    (entityHitResult.getEntity() instanceof LivingEntity || entityHitResult.getEntity() instanceof EnderDragonPart)
             ) {
                 event.setSwingHand(false);
                 event.setCanceled(true);
@@ -1112,15 +1114,15 @@ public class ControlEngine implements IEventBasedEngine {
 	 * Event listeners end
 	 **********************/
 	@Override
-	public void gameEventBus(IEventBus gameEventBus) {
-		gameEventBus.addListener(this::epicfight$mouseScrollEvent);
-		gameEventBus.addListener(this::epicfight$moveInputEvent);
-		gameEventBus.addListener(this::epicfight$clientTickEndEvent);
-		gameEventBus.addListener(this::epicfight$interactionKeyMappingTriggered);
-		gameEventBus.addListener(this::epicfight$livingJumpEvent);
+	public void gameEventBus(SimpleEventBus gameEventBus) {
+		gameEventBus.addListener(InputEvent.MouseScrollingEvent.class, this::epicfight$mouseScrollEvent);
+		gameEventBus.addListener(MovementInputUpdateEvent.class, this::epicfight$moveInputEvent);
+		gameEventBus.addListener(ClientTickEvent.Post.class, this::epicfight$clientTickEndEvent);
+		gameEventBus.addListener(InputEvent.InteractionKeyMappingTriggered.class, this::epicfight$interactionKeyMappingTriggered);
+		gameEventBus.addListener(LivingJumpEvent.class, this::epicfight$livingJumpEvent);
 	}
 
 	@Override
-	public void modEventBus(IEventBus modEventBus) {
+	public void modEventBus(SimpleEventBus modEventBus) {
 	}
 }

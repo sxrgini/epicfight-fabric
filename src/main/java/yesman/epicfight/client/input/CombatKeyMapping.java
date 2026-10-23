@@ -3,7 +3,6 @@ package yesman.epicfight.client.input;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.KeyMapping;
-import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.client.ClientEngine;
 
@@ -40,11 +39,26 @@ public class CombatKeyMapping extends KeyMapping {
 
     /// This key mapping only applies [KeyConflictContext#IN_GAME] since it represents player moves.
     public CombatKeyMapping(String description, InputConstants.Type type, int code, String category) {
-        super(description, KeyConflictContext.IN_GAME, type, code, category);
+        super(description, type, code, category);
     }
 
     @Override
-    public boolean isActiveAndMatches(@NotNull InputConstants.Key keyCode) {
-        return super.isActiveAndMatches(keyCode) && ClientEngine.getInstance().isEpicFightMode();
+    public boolean isDown() {
+        return super.isDown() && ClientEngine.getInstance().isEpicFightMode();
+    }
+
+    @Override
+    public boolean consumeClick() {
+        return ClientEngine.getInstance().isEpicFightMode() && super.consumeClick();
+    }
+
+    @Override
+    public boolean matches(int keysym, int scancode) {
+        return super.matches(keysym, scancode) && ClientEngine.getInstance().isEpicFightMode();
+    }
+
+    @Override
+    public boolean matchesMouse(int button) {
+        return super.matchesMouse(button) && ClientEngine.getInstance().isEpicFightMode();
     }
 }

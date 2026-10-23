@@ -8,11 +8,10 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import yesman.epicfight.api.data.reloader.SkillReloadListener;
 import yesman.epicfight.api.utils.ParseUtil;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.datapack.widgets.PopupBox;
 import yesman.epicfight.data.conditions.Condition.EntityPatchCondition;
 import yesman.epicfight.registry.EpicFightRegistries;
@@ -62,10 +61,9 @@ public class PlayerSkillActivated extends EntityPatchCondition {
 		return false;
 	}
 
-    @Override @ClientOnly
-    @OnlyIn(Dist.CLIENT) // TODO: Remove OnlyIn annotation and completely decouple the widget provider code
+    @Override @Environment(EnvType.CLIENT)
 	public List<ParameterEditor> getAcceptingParameters(Screen screen) {
-		AbstractWidget popupBox = new PopupBox.RegistryPopupBox<>(screen, screen.getMinecraft().font, 0, 0, 0, 0, null, null, Component.literal("skill"), EpicFightRegistries.SKILL, null);
+		AbstractWidget popupBox = new PopupBox.RegistryPopupBox<>(screen, screen.minecraft.font, 0, 0, 0, 0, null, null, Component.literal("skill"), EpicFightRegistries.SKILL, null);
 		return List.of(ParameterEditor.of(skill -> StringTag.valueOf(skill.toString()), tag -> EpicFightRegistries.SKILL.get(ResourceLocation.parse(ParseUtil.nullOrToString(tag, Tag::getAsString))), popupBox));
 	}
 }

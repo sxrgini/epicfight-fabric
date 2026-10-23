@@ -19,7 +19,8 @@ import yesman.epicfight.api.client.event.EpicFightClientEventHooks;
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.AttackResult;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.particle.HitParticleType;
@@ -179,7 +180,7 @@ public class LiechtenauerSkill extends WeaponInnateSkill {
         return !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !damageSource.is(DamageTypeTags.IS_EXPLOSION);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Component> getTooltipOnItem(ItemStack itemstack, CapabilityItem cap, PlayerPatch<?> playerCap) {
         List<Component> list = Lists.newArrayList();
         List<Object> tooltipArgs = Lists.newArrayList();

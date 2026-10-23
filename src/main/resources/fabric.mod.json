@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "id": "epicfight",
+  "version": "${version}",
+  "name": "Epic Fight",
+  "description": "Adds complex game mechanics and fighting styles to your gameplay, while making Minecraft more Souls-like. Fabric port.",
+  "authors": [
+    "Yesman",
+    "Gui",
+    "Asan",
+    "Wayfarer (aka squoshi)",
+    "Fori",
+    "Ellet",
+    "iiAmPanda (Fabric port)"
+  ],
+  "custom": {"epictweaks": "Includes Epic Tweaks by HDainester (LGPL-3.0), embedded by iiAmPanda"},
+  "contact": {
+    "homepage": "https://epicfight-docs.readthedocs.io",
+    "issues": "https://github.com/Epic-Fight/epicfight/issues",
+    "sources": "https://github.com/Epic-Fight/epicfight/"
+  },
+  "license": "GPL-3.0-only (code); All Rights Reserved (assets)",
+  "icon": "epicfight_logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "yesman.epicfight.platform.fabric.EpicFightFabric"
+    ],
+    "client": [
+      "yesman.epicfight.platform.fabric.client.EpicFightFabricClient"
+    ],
+    "controlify": [
+      "yesman.epicfight.compat.controlify.EpicFightControlifyEntrypoint"
+    ],
+    "modmenu": [
+      "yesman.epicfight.platform.fabric.client.EpicFightModMenu"
+    ]
+  },
+  "mixins": [
+    "epicfight.mixins.json",
+    "epicfight-platform.fabric.mixins.json"
+  ],
+  "accessWidener": "epicfight.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

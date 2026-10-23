@@ -4,7 +4,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.Mth;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.types.player.SkillCastEvent;
 import yesman.epicfight.api.event.types.player.SkillConsumeEvent;
@@ -122,7 +123,7 @@ public class SkillContainer {
         return true;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public void setSkillRemote(@Nullable Skill skill) {
         // For server players or a local player, call setSkill instead
         if (!this.executor.isLogicalClient() || this.executor.getOriginal().isLocalPlayer()) {
@@ -235,7 +236,7 @@ public class SkillContainer {
         this.replaceCooldown = Mth.clamp(replaceCooldown, 0, EpicFightGameRules.SKILL_REPLACE_COOLDOWN.getRuleValue(this.executor.getOriginal().level()));
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public SkillCastEvent sendCastRequest(LocalPlayerPatch executor, ControlEngine controlEngine) {
         CompoundTag arguments = new CompoundTag();
 
@@ -281,7 +282,7 @@ public class SkillContainer {
         return event;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public void sendCancelRequest(LocalPlayerPatch executor, ControlEngine controlEngine) {
         CPSkillRequest packet = new CPSkillRequest(this.getSlot(), CPSkillRequest.WorkType.CANCEL);
         controlEngine.addPacketToSend(packet);
@@ -462,7 +463,7 @@ public class SkillContainer {
     }
 
     /// Use this method instead of calling getClientExecutor multiple times to avoid repetitive type-casting
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public void runOnLocalClient(Consumer<LocalPlayerPatch> run) {
         if (this.executor.isLogicalClient()) {
             run.accept(this.getClientExecutor());

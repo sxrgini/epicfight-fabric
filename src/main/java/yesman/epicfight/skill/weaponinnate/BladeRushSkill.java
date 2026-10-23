@@ -15,7 +15,8 @@ import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.gameasset.Animations;
@@ -74,7 +75,7 @@ public class BladeRushSkill extends WeaponInnateSkill {
         this.tryAnimations = builder.tryAnimations;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void gatherArguments(SkillContainer container, ControlEngine controlEngine, CompoundTag arguments) {
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         buf.writeBoolean(true);
@@ -155,11 +156,11 @@ public class BladeRushSkill extends WeaponInnateSkill {
         return container.getExecutor().getTarget() != null && container.getExecutor().getTarget().isAlive() && container.getExecutor().getOriginal().distanceToSqr(container.getExecutor().getTarget()) < 100.0D;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void onScreen(LocalPlayerPatch playerpatch, float resolutionX, float resolutionY) {
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void validationFeedback(SkillContainer container) {
         // Resolve the innate skill against the active combat hand so the offhand-only carrier
         // gets the same validation feedback as a mainhand wielder.

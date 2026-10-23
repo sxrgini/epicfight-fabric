@@ -1,5 +1,7 @@
 package yesman.epicfight.world.capabilities.entitypatch.player;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.core.Holder;
@@ -144,7 +146,7 @@ public class ServerPlayerPatch extends PlayerPatch<ServerPlayer> {
 
 		if (hand == InteractionHand.OFF_HAND) {
 			if (!from.isEmpty()) {
-				from.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
+				NeoCompat.attributeModifiers(from).forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
 					if (Attributes.ATTACK_SPEED.equals(attribute)) {
 						this.original.getAttribute(EpicFightAttributes.OFFHAND_ATTACK_SPEED).removeModifier(modifier);
 					}
@@ -160,7 +162,7 @@ public class ServerPlayerPatch extends PlayerPatch<ServerPlayer> {
 			}
 			
 			if (!to.isEmpty()) {
-				to.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
+				NeoCompat.attributeModifiers(to).forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
 					if (Attributes.ATTACK_SPEED.equals(attribute)) {
 						this.original.getAttribute(EpicFightAttributes.OFFHAND_ATTACK_SPEED).addTransientModifier(modifier);
 					}

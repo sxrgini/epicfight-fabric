@@ -172,6 +172,9 @@ classified into three types:
 
 <img src="https://i.imgur.com/CWsUfxt.jpg" alt="Bold Breakline" width="1344" height="48" />
 
+## **Embedded: Epic Tweaks**
+This build includes [Epic Tweaks](https://gitlab.com/srcmc/epictweaks) by HDainester (LGPL-3.0, see `LICENSE-EPICTWEAKS-LGPL.md`), ported to Fabric by iiAmPanda. Options live in `config/epictweaks-client.toml`: `filter_animation_first_person`, `enforce_mode`, `autoswitch_mode` (all default `true`).
+
 ## **Support & Affiliates**
 
 <center><a href="https://billing.sparkedhost.com/aff.php?aff=2724"><img src="https://i.imgur.com/kTgYcrh.pnghttps://i.imgur.com/kTgYcrh.png" alt="Modloader"></a></center>

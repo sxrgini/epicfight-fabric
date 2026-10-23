@@ -1,6 +1,6 @@
 package yesman.epicfight.client.renderer.shader.compute.loader;
 
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import net.minecraft.server.packs.resources.ResourceProvider;
 import org.lwjgl.opengl.GL33C;
 import org.lwjgl.opengl.GL43;
 import yesman.epicfight.EpicFight;
@@ -12,7 +12,6 @@ import yesman.epicfight.client.renderer.shader.compute.backend.program.BarrierFl
 import yesman.epicfight.client.renderer.shader.compute.backend.program.ComputeProgram;
 import yesman.epicfight.client.renderer.shader.compute.backend.ssbo.DynamicSSBO;
 import yesman.epicfight.client.renderer.shader.compute.backend.ssbo.IArrayBufferProxy;
-import yesman.epicfight.client.renderer.shader.compute.iris.IrisComputeShaderSetup;
 
 import java.nio.FloatBuffer;
 import java.util.function.BiConsumer;
@@ -35,10 +34,6 @@ public class ComputeShaderProvider {
 
     private static Function<SkinnedMesh, ComputeShaderSetup> computeShaderProvider = VanillaComputeShaderSetup::new;
     
-    public static void initIris() {
-    	irisLoaded = true;
-    	computeShaderProvider = IrisComputeShaderSetup::new;
-    }
     
     public static boolean supportComputeShader() {
     	return supportComputeShader;
@@ -64,23 +59,19 @@ public class ComputeShaderProvider {
         EpicFight.LOGGER.warn("[Computer Shader Acceleration] Compute Shader: {}", (supportComputeShader ? "Supported" : "Unsupported"));
     }
     
-    public static void epicfight$registerComputeShaders(RegisterShadersEvent event) {
+    public static void epicfight$registerComputeShaders(ResourceProvider resourceProvider) {
         if (!supportComputeShader) return;
         
         clear();
         
         try {
-            meshComputeVanilla = ComputeShaderLoader.loadComputeShaderProgram(event.getResourceProvider(),
+            meshComputeVanilla = ComputeShaderLoader.loadComputeShaderProgram(resourceProvider,
                     EpicFight.identifier("shaders/compute/vanilla_mesh_transformer.comp"),
                     BarrierFlags.SHADER_STORAGE, BarrierFlags.VERTEX_ATTRIB_ARRAY);
             /*batchedMeshComputeVanilla =
-                    ComputeShaderLoader.loadComputeShaderProgram(event.getResourceProvider(),
+                    ComputeShaderLoader.loadComputeShaderProgram(resourceProvider,
                             EpicFight.identifier("shaders/compute/batched/vanilla_batched_mesh_transformer.comp"),
                             BarrierFlags.SHADER_STORAGE, BarrierFlags.VERTEX_ATTRIB_ARRAY);*/
-            if (irisLoaded)
-            {
-                meshComputeIris = ComputeShaderLoader.loadComputeShaderProgram(event.getResourceProvider(), EpicFight.identifier("shaders/compute/iris_mesh_transformer.comp"), BarrierFlags.SHADER_STORAGE, BarrierFlags.VERTEX_ATTRIB_ARRAY);
-            }
 
             maxSSBOLen = ComputeShaderLoader.getGLMaxSSBOSize();
             ssboAlignment = ComputeShaderLoader.getSSBOAlignment();

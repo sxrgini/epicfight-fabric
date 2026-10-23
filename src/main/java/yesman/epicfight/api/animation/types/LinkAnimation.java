@@ -7,7 +7,8 @@ import yesman.epicfight.api.animation.types.EntityState.StateFactor;
 import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.client.animation.property.JointMaskEntry;
 import yesman.epicfight.api.utils.datastructure.ParameterizedHashMap;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.Map;
@@ -134,7 +135,7 @@ public class LinkAnimation extends DynamicAnimation implements AnimationAccessor
 		return TransformSheet.EMPTY_SHEET;
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public Optional<JointMaskEntry> getJointMaskEntry(LivingEntityPatch<?> entitypatch, boolean useCurrentMotion) {
 		return useCurrentMotion ? this.toAnimation.get().getJointMaskEntry(entitypatch, true) : this.fromAnimation.get().getJointMaskEntry(entitypatch, false);
 	}

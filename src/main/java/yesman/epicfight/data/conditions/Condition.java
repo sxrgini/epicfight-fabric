@@ -10,11 +10,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import yesman.epicfight.api.utils.ExtensibleEnum;
 import yesman.epicfight.api.utils.ExtensibleEnumManager;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.text.MessageFormat;
@@ -76,8 +75,7 @@ public interface Condition<T> {
 	}
 
     // TODO: Remove OnlyIn annotation and completely decouple the widget provider code
-    @ClientOnly
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
 	List<ParameterEditor> getAcceptingParameters(Screen screen);
 	
 	abstract class EntityPatchCondition implements Condition<LivingEntityPatch<?>> {
@@ -89,7 +87,7 @@ public interface Condition<T> {
 	abstract class ItemStackCondition implements Condition<ItemStack> {
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	class ParameterEditor {
 		public static ParameterEditor of(Function<Object, Tag> toTag, Function<Tag, Object> fromTag, AbstractWidget editWidget) {
 			return new ParameterEditor(toTag, fromTag, editWidget);

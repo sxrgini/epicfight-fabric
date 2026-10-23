@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import yesman.epicfight.api.animation.Joint;
 import yesman.epicfight.api.animation.JointTransform;
 import yesman.epicfight.api.animation.Pose;
@@ -17,7 +17,8 @@ import yesman.epicfight.api.animation.types.AttackAnimation;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import javax.annotation.Nullable;
@@ -90,8 +91,8 @@ public abstract class Collider {
 	
 	public List<Entity> getCollideEntities(Entity entity) {
 		List<Entity> list = entity.level().getEntities(entity, this.getHitboxAABB(), (e) -> {
-			if (e instanceof PartEntity<?> partEntity) {
-				if (partEntity.getParent().is(entity)) {
+			if (e instanceof EnderDragonPart partEntity) {
+				if (partEntity.parentMob.is(entity)) {
 					return false;
 				}
 			}
@@ -107,11 +108,11 @@ public abstract class Collider {
 	}
 	
 	/** Display on debug mode **/
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public abstract void drawInternal(PoseStack poseStack, VertexConsumer vertexConsumer, Armature armature, Joint joint, Pose pose1, Pose pose2, float partialTicks, int colliderColor);
 	
 	/** Display on debug mode **/
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void draw(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, AttackAnimation animation, Joint joint, float prevElapsedTime, float elapsedTime, float partialTicks, float attackSpeed) {
 		Armature armature = entitypatch.getArmature();
 		EntityState state = animation.getState(entitypatch, elapsedTime);
@@ -149,7 +150,7 @@ public abstract class Collider {
 	
 	public abstract boolean isCollide(Entity opponent);
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public abstract RenderType getRenderType();
 	
 	protected AABB getHitboxAABB() {

@@ -15,8 +15,6 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.neoforged.bus.api.Event;
-import net.neoforged.fml.event.IModBusEvent;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.EpicFight;
@@ -30,7 +28,8 @@ import yesman.epicfight.api.data.reloader.SkillReloadListener;
 import yesman.epicfight.api.exception.AssetLoadingException;
 import yesman.epicfight.api.utils.InstantiateInvoker;
 import yesman.epicfight.api.utils.MutableBoolean;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
 import yesman.epicfight.main.EpicFightMod;
@@ -280,7 +279,7 @@ public class AnimationManager extends SimplePreparableReloadListener<List<Resour
 	 *                        custom weapon types & mob capabilities won't be created because they won't be able to find the animations from the server
 	 *                        dummy animations will be automatically removed right after reloading resourced as the server forces using resource pack
 	 */
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void processServerPacket(SPDatapackSync packet, boolean mandatoryPack) {
 		if (mandatoryPack) {
 			for (CompoundTag tag : packet.tags()) {
@@ -476,7 +475,28 @@ public class AnimationManager extends SimplePreparableReloadListener<List<Resour
 		}
 	}
 	
-	public static class AnimationRegistryEvent extends Event implements IModBusEvent {
+	public static class AnimationRegistryEvent {
+		private static final List<Consumer<AnimationRegistryEvent>> LISTENERS = Lists.newArrayList();
+		
+		/// Registers a listener that adds animation builders. Addons can alternatively declare a `Consumer<AnimationRegistryEvent>`
+		/// as an entrypoint under the key `epicfight_animations` in their fabric.mod.json.
+		public static void register(Consumer<AnimationRegistryEvent> listener) {
+			LISTENERS.add(listener);
+		}
+		
+		public static AnimationRegistryEvent post() {
+			AnimationRegistryEvent event = new AnimationRegistryEvent();
+			LISTENERS.forEach(listener -> listener.accept(event));
+			
+			net.fabricmc.loader.api.FabricLoader.getInstance().getEntrypoints("epicfight_animations", Consumer.class).forEach(listener -> {
+				@SuppressWarnings("unchecked")
+				Consumer<AnimationRegistryEvent> typed = (Consumer<AnimationRegistryEvent>)listener;
+				typed.accept(event);
+			});
+			
+			return event;
+		}
+		
 		private final List<AnimationBuilder> builders = Lists.newArrayList();
 		private final Set<String> namespaces = Sets.newHashSet();
 		

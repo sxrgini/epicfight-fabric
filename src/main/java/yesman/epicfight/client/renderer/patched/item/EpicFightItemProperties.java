@@ -14,7 +14,8 @@ public class EpicFightItemProperties {
             Holder<Skill> skill = SkillBookItem.getContainSkill(itemstack).orElse(null);
 
             if (skill != null) {
-                return skill.value().getCategory().universalOrdinal();
+                // Vanilla clamps item properties to [0, 1], so the ordinal is scaled down.
+                return skill.value().getCategory().universalOrdinal() / 100.0F;
             }
 
             return Float.NEGATIVE_INFINITY;

@@ -7,7 +7,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.api.client.event.EpicFightClientEventHooks;
 import yesman.epicfight.api.client.event.types.entity.ProcessEntityPairingPacketEvent;
 import yesman.epicfight.api.event.EpicFightEventHooks;
@@ -119,7 +120,7 @@ public abstract class EntityPatch<T extends Entity> {
 		return this.original.getViewVector(partialTick);
 	}
 
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public void fireEntityPairingEvent(SPEntityPairingPacket packet) {
         ProcessEntityPairingPacketEvent pairingPacketEvent = new ProcessEntityPairingPacketEvent(this, packet);
         EpicFightClientEventHooks.Entity.HANDLE_ENTITY_PAIRING_PACKET.post(pairingPacketEvent);
@@ -129,11 +130,11 @@ public abstract class EntityPatch<T extends Entity> {
 		}
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void entityPairing(SPEntityPairingPacket packet) {
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public boolean isOutlineVisible(LocalPlayer player) {
 		return true;
 	}

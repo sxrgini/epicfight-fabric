@@ -18,7 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import yesman.epicfight.api.animation.JointTransform;
 import yesman.epicfight.api.animation.Keyframe;
 import yesman.epicfight.api.animation.Pose;
@@ -392,8 +392,8 @@ public class LocalPlayerPatch extends AbstractClientPlayerPatch<LocalPlayer> {
 	
 	@Override
 	public void openSkillBook(ItemStack itemstack, InteractionHand hand) {
-		if (itemstack.has(EpicFightDataComponentTypes.SKILL)) {
-            Holder<Skill> skill = itemstack.get(EpicFightDataComponentTypes.SKILL);
+		if (itemstack.has(EpicFightDataComponentTypes.SKILL.get())) {
+            Holder<Skill> skill = itemstack.get(EpicFightDataComponentTypes.SKILL.get());
 			Minecraft.getInstance().setScreen(new SkillBookScreen(this.original, skill.value(), hand, null));
 		}
 	}
@@ -410,6 +410,11 @@ public class LocalPlayerPatch extends AbstractClientPlayerPatch<LocalPlayer> {
 	@Override
 	public void updateHeldItem(CapabilityItem mainHandCap, CapabilityItem offHandCap) {
 		super.updateHeldItem(mainHandCap, offHandCap);
+
+		// Epic Tweaks (embedded) handles mode switching itself when enabled
+		if (yesman.epicfight.tweaks.EpicTweaks.updateHeldItem(this)) {
+			return;
+		}
 
 		if (ClientConfig.playerBehaviorStrategy == ClientConfig.PlayerBehaviorStrategy.SWITCHING_MODE) {
 
@@ -453,7 +458,7 @@ public class LocalPlayerPatch extends AbstractClientPlayerPatch<LocalPlayer> {
         if (entityHitResult != null) {
             Entity hitEntity = entityHitResult.getEntity();
 
-            if (!(hitEntity instanceof LivingEntity) && !(hitEntity instanceof PartEntity) && !(hitEntity instanceof Interaction)) {
+            if (!(hitEntity instanceof LivingEntity) && !(hitEntity instanceof EnderDragonPart) && !(hitEntity instanceof Interaction)) {
                 return false;
             }
         }

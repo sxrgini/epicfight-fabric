@@ -6,7 +6,8 @@ import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.types.StaticAnimation;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.registry.entries.EpicFightSkillDataKeys;
 import yesman.epicfight.skill.SkillContainer;
@@ -57,7 +58,7 @@ public class EverlastingAllegiance extends WeaponInnateSkill {
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void cancelOnClient(SkillContainer container, CompoundTag arguments) {
         super.cancelOnClient(container, arguments);
 

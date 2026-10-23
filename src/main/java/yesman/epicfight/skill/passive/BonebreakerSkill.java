@@ -8,7 +8,8 @@ import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.IdentifierProvider;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.network.EntityPairingPacketTypes;
@@ -126,19 +127,19 @@ public class BonebreakerSkill extends PassiveSkill {
 		});
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean shouldDraw(SkillContainer container) {
 		Entity target = container.getExecutor().getLevel().getEntity(container.getDataManager().getDataValue(EpicFightSkillDataKeys.ENTITY_ID));
 		return target != null && target.isAlive();
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
 		guiGraphics.blit(this.getSkillTexture(), (int)x, (int)y, 24, 24, 0, 0, 1, 1, 1, 1);
-		guiGraphics.drawString(gui.getFont(), String.valueOf(container.getDataManager().getDataValue(EpicFightSkillDataKeys.STACKS)), x + 10, y + 10, 16777215, true);
+		yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.valueOf(container.getDataManager().getDataValue(EpicFightSkillDataKeys.STACKS)), x + 10, y + 10, 16777215, true);
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public List<Object> getTooltipArgsOfScreen(List<Object> list) {
 		list.add(ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(this.damageBonus * 100.0F));
 		list.add(this.maxDamageBonusStacks);

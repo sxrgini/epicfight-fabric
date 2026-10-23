@@ -9,7 +9,8 @@ import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.IdentifierProvider;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.network.EntityPairingPacketTypes;
@@ -151,7 +152,7 @@ public class VengeanceSkill extends PassiveSkill {
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void executeOnClient(SkillContainer container, CompoundTag args) {
         container.activate();
         container.getExecutor().playLocalSound(EpicFightSounds.VENGEANCE);
@@ -189,25 +190,25 @@ public class VengeanceSkill extends PassiveSkill {
         });
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public boolean shouldDraw(SkillContainer container) {
         return container.isActivated() || (container.getDataManager().getDataValue(EpicFightSkillDataKeys.ENTITY_ID) > -1 && !tickExceeded(container));
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
         guiGraphics.blit(this.getSkillTexture(), (int)x, (int)y, 24, 24, 0, 0, 1, 1, 1, 1);
 
         if (container.isActivated()) {
             float f = Math.round(this.damageBonus * 100.0F * container.getDurationRatio(1.0F));
-            guiGraphics.drawString(gui.getFont(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(f) + "%", x + 6, y + 8, 16777215, true);
+            yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(f) + "%", x + 6, y + 8, 16777215, true);
         } else if (canResetTarget(container)) {
             int seconds = 4 - ((container.getExecutor().getOriginal().tickCount - container.getDataManager().getDataValue(EpicFightSkillDataKeys.TICK_RECORD)) - 80) / 20;
-            guiGraphics.drawString(gui.getFont(), String.valueOf(seconds), x + 6, y + 8, 16777215, true);
+            yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.valueOf(seconds), x + 6, y + 8, 16777215, true);
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Object> getTooltipArgsOfScreen(List<Object> list) {
         list.add(ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(this.damageBonus * 100.0F));
         list.add(ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(this.damageBonus * 100.0F));

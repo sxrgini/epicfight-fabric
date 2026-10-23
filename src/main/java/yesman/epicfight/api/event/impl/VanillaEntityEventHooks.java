@@ -21,7 +21,7 @@ import net.minecraft.world.level.entity.PersistentEntitySectionManager;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import org.jetbrains.annotations.Nullable;
 import yesman.epicfight.api.animation.LivingMotions;
 import yesman.epicfight.api.animation.types.StaticAnimation;
@@ -86,6 +86,11 @@ public final class VanillaEntityEventHooks {
                 entitypatch.onJoinWorld(entity, level, worldgen);
             }
         });
+    }
+
+    /// Replaces NeoForge's `Entity#onAddedToLevel`, called right after the entity joined a level on both sides.
+    public static void onAddedToLevel(Entity entity) {
+        EpicFightCapabilities.getUnparameterizedEntityPatch(entity, EntityPatch.class).ifPresent(EntityPatch::onAddedToLevel);
     }
 
     /// Called before ticking an entity
@@ -439,8 +444,8 @@ public final class VanillaEntityEventHooks {
                     shouldCancel = true;
                 }
 
-                if (rayResult.getEntity() instanceof PartEntity<?> partEntity) {
-                    Entity parent = partEntity.getParent();
+                if (rayResult.getEntity() instanceof EnderDragonPart partEntity) {
+                    Entity parent = partEntity.parentMob;
 
                     if (projectile.getOwner().is(parent)) {
                         shouldCancel = true;

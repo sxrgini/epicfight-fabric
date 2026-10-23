@@ -15,7 +15,8 @@ import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.client.renderer.EpicFightRenderTypes;
 import yesman.epicfight.registry.entries.EpicFightSkillDataKeys;
@@ -139,7 +140,7 @@ public class AdaptiveSkinSkill extends PassiveSkill {
         );
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void onInitiateClient(SkillContainer container) {
         container.getExecutor().getEntityDecorations().addDecorationOverlay(this, new DecorationOverlay() {
             @Override
@@ -185,31 +186,31 @@ public class AdaptiveSkinSkill extends PassiveSkill {
         return this.protectableDamageTypeTags.get(tagKey);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public boolean shouldDraw(SkillContainer container) {
         TagKey<DamageType> resistingDamageTypeTag = container.getDataManager().getDataValue(EpicFightSkillDataKeys.RESISTING_DAMAGE_TYPE);
         return !EpicFightDamageTypeTags.NONE.equals(resistingDamageTypeTag) && this.protectableDamageTypeTags.containsKey(resistingDamageTypeTag);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
         Vec3f color = this.protectableDamageTypeTags.get(container.getDataManager().getDataValue(EpicFightSkillDataKeys.RESISTING_DAMAGE_TYPE));
         guiGraphics.innerBlit(this.getSkillTexture(), (int)x, (int)x + 24, (int)y, (int)y + 24, 0, 0.0F, 1.0F, 0.0F, 1.0F, color.x, color.y, color.z, 1.0F);
         int stacks = container.getDataManager().getDataValue(EpicFightSkillDataKeys.STACKS);
 
         if (stacks > 1) {
-            guiGraphics.drawString(gui.getFont(), String.valueOf(stacks), x + 18, y + 16, 16777215, true);
+            yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.valueOf(stacks), x + 18, y + 16, 16777215, true);
         }
 
         int lastHitTick = container.getDataManager().getDataValueOptional(EpicFightSkillDataKeys.TICK_RECORD).orElse(0);
 
         if (container.getExecutor().getOriginal().tickCount - lastHitTick > 200) {
             int remainseconds = 1 + (100 - (container.getExecutor().getOriginal().tickCount - lastHitTick - 200)) / 20;
-            guiGraphics.drawString(gui.getFont(), String.valueOf(remainseconds), x + 8, y + 8, 16777215, true);
+            yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.valueOf(remainseconds), x + 8, y + 8, 16777215, true);
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Object> getTooltipArgsOfScreen(List<Object> list) {
         list.add(ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(this.damageResistance * 100.0F));
         list.add(this.maxResistanceStack);

@@ -31,7 +31,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
+import yesman.epicfight.platform.fabric.event.EntityAttributeModificationEvent;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.*;
@@ -49,7 +49,8 @@ import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.data.loot.function.SetSkillFunction;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
@@ -105,7 +106,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> implements InverseKi
 		}
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void entityPairing(SPEntityPairingPacket packet) {
 		super.entityPairing(packet);
 		
@@ -233,7 +234,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> implements InverseKi
 		this.ikSimulator.tick(null);
 		this.setIKHeightAndRootRotation();
 		
-		Entity bodyPart = this.original.getParts()[2];
+		Entity bodyPart = this.original.getSubEntities()[2];
 		AABB bodyBoundingBox = bodyPart.getBoundingBox();
 		List<Entity> list = this.original.level().getEntities(this.original, bodyBoundingBox, EntitySelector.pushableBy(this.original));
 		
@@ -401,7 +402,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> implements InverseKi
 		return true;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean isOutlineVisible(LocalPlayer player) {
 		return false;
 	}

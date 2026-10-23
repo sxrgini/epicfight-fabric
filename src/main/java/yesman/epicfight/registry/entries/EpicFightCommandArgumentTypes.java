@@ -4,8 +4,8 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
+import yesman.epicfight.platform.fabric.registry.DeferredRegister;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.server.commands.arguments.AnimationArgument;
 import yesman.epicfight.server.commands.arguments.SkillArgument;
@@ -19,7 +19,7 @@ public final class EpicFightCommandArgumentTypes {
 	public static final DeferredHolder<ArgumentTypeInfo<?, ?>, ArgumentTypeInfo<AnimationArgument, ?>> ANIMATION = REGISTRY.register("animation", () -> SingletonArgumentInfo.contextFree(AnimationArgument::animation));
 	
 	public static void registerArgumentTypes() {
-		ArgumentTypeInfos.registerByClass(SkillArgument.class, SKILL.get());
-		ArgumentTypeInfos.registerByClass(AnimationArgument.class, ANIMATION.get());
+		ArgumentTypeInfos.BY_CLASS.put(SkillArgument.class, SKILL.get());
+		ArgumentTypeInfos.BY_CLASS.put(AnimationArgument.class, ANIMATION.get());
 	}
 }

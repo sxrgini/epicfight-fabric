@@ -28,7 +28,7 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
+import yesman.epicfight.platform.fabric.FabricHooks;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.boss.WitherPatch;
 
@@ -163,7 +163,7 @@ public abstract class MixinWitherBoss extends Monster implements PowerableMob, R
 				this.bossEvent.setProgress(1.0F - (float) k1 / 220.0F);
 
 				if (k1 <= 0) {
-					Level.ExplosionInteraction explosion$blockinteraction = EventHooks.canEntityGrief(self.level(), this) ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE;
+					Level.ExplosionInteraction explosion$blockinteraction = FabricHooks.canEntityGrief(self.level(), this) ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE;
 					self.level().explode(this, self.getX(), self.getEyeY(), self.getZ(), 7.0F, false, explosion$blockinteraction);
 
 					if (!self.isSilent()) {
@@ -234,7 +234,7 @@ public abstract class MixinWitherBoss extends Monster implements PowerableMob, R
 				if (this.destroyBlocksTick > 0) {
 					--this.destroyBlocksTick;
 					
-					if (this.destroyBlocksTick == 0 && EventHooks.canEntityGrief(self.level(), this)) {
+					if (this.destroyBlocksTick == 0 && FabricHooks.canEntityGrief(self.level(), this)) {
 						int j1 = Mth.floor(self.getY());
 						int i2 = Mth.floor(self.getX());
 						int j2 = Mth.floor(self.getZ());
@@ -249,7 +249,7 @@ public abstract class MixinWitherBoss extends Monster implements PowerableMob, R
 									BlockPos blockpos = new BlockPos(l2, l, i1);
 									BlockState blockstate = self.level().getBlockState(blockpos);
 
-									if (blockstate.canEntityDestroy(self.level(), blockpos, this) && EventHooks.onEntityDestroyBlock(this, blockpos, blockstate)) {
+									if (WitherBoss.canDestroy(blockstate) && FabricHooks.onEntityDestroyBlock(this, blockpos, blockstate)) {
 										flag = self.level().destroyBlock(blockpos, true, this) || flag;
 									}
 								}

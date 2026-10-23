@@ -21,8 +21,8 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.client.event.ViewportEvent;
-import net.neoforged.neoforge.entity.PartEntity;
+import yesman.epicfight.platform.fabric.client.event.ViewportEvent;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -362,7 +362,7 @@ public final class EpicFightCameraAPI {
                 !entity.is(this.focusingEntity) &&
                 MathUtils.canBeSeen(entity, this.minecraft.player, lockOnRange) &&
                 (
-                    this.minecraft.getEntityRenderDispatcher().shouldRender(entity, this.minecraft.levelRenderer.getFrustum(), cameraLocation.x(), cameraLocation.y(), cameraLocation.z()) || // Excludes entities out of the view frustum
+                    this.minecraft.getEntityRenderDispatcher().shouldRender(entity, (this.minecraft.levelRenderer.capturedFrustum != null ? this.minecraft.levelRenderer.capturedFrustum : this.minecraft.levelRenderer.cullingFrustum), cameraLocation.x(), cameraLocation.y(), cameraLocation.z()) || // Excludes entities out of the view frustum
                         entity.hasIndirectPassenger(this.minecraft.player)    // Excludes riding entities
                 ) &&
                 entity.distanceToSqr(this.minecraft.player) < lockOnRange * lockOnRange
@@ -626,8 +626,8 @@ public final class EpicFightCameraAPI {
                     if (!(entityHitResult.getEntity() instanceof ArmorStand) && (!this.lockingOnTarget || InputManager.isActionActive(EpicFightInputAction.LOCK_ON_SHIFT_FREELY))) {
                         this.setFocusingEntity(livingentity);
                     }
-                } else if (entityHitResult.getEntity() instanceof PartEntity<?> partEntity) {
-                    Entity parent = partEntity.getParent();
+                } else if (entityHitResult.getEntity() instanceof EnderDragonPart partEntity) {
+                    Entity parent = partEntity.parentMob;
 
                     if (parent instanceof LivingEntity parentLivingEntity && (!this.lockingOnTarget || InputManager.isActionActive(EpicFightInputAction.LOCK_ON_SHIFT_FREELY))) {
                         this.setFocusingEntity(parentLivingEntity);

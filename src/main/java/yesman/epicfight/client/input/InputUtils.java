@@ -7,8 +7,8 @@ import net.minecraft.client.Options;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.neoforge.client.ClientHooks;
-import net.neoforged.neoforge.client.event.InputEvent;
+import yesman.epicfight.platform.fabric.client.FabricClientHooks;
+import yesman.epicfight.platform.fabric.client.event.InputEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.api.client.input.InputManager;
@@ -28,7 +28,7 @@ public final class InputUtils {
     public static void runKeyboardMouseEvent(@NotNull InputAction action, @NotNull Runnable handler) {
         final KeyMapping keyMapping = action.keyMapping();
 
-        final InputConstants.Key key = keyMapping.getKey();
+        final InputConstants.Key key = FabricClientHooks.keyOf(keyMapping);
         final boolean isMouse = InputConstants.Type.MOUSE == key.getType();
 
         final int mouseButton = isMouse ? key.getValue() : -1;
@@ -56,7 +56,7 @@ public final class InputUtils {
                 keyMapping == option.keyPickItem
         ) {
             @SuppressWarnings("UnstableApiUsage")
-            InputEvent.InteractionKeyMappingTriggered inputEvent = ClientHooks.onClickInput(
+            InputEvent.InteractionKeyMappingTriggered inputEvent = FabricClientHooks.onClickInput(
                 mouseButton, keyMapping, InteractionHand.MAIN_HAND
             );
 

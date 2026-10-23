@@ -7,7 +7,8 @@ import yesman.epicfight.api.animation.property.AnimationEvent;
 import yesman.epicfight.api.animation.property.AnimationEvent.SimpleEvent;
 import yesman.epicfight.api.asset.AssetAccessor;
 import yesman.epicfight.api.client.animation.Layer;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.List;
@@ -72,12 +73,12 @@ public class SelectiveAnimation extends StaticAnimation {
 		return this.animationsInEachState;
 	}
 
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public Layer.Priority getPriority() {
 		return this.animationsInEachState.get(0).get().getPriority();
 	}
 
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public Layer.LayerType getLayerType() {
 		return this.animationsInEachState.get(0).get().getLayerType();
 	}

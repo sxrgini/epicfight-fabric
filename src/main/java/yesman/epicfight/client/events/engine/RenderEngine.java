@@ -1,5 +1,7 @@
 package yesman.epicfight.client.events.engine;
 
+import yesman.epicfight.platform.fabric.client.FabricClientHooks;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonElement;
@@ -34,12 +36,9 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.sweenus.simplytooltips.client.TooltipNavigationConfig;
-import net.sweenus.simplytooltips.client.render.ItemThemeRegistry;
+import yesman.epicfight.platform.fabric.event.SimpleEventBus;
+import yesman.epicfight.platform.fabric.event.LivingJumpEvent;
+import yesman.epicfight.platform.fabric.client.event.*;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -445,20 +444,9 @@ public class RenderEngine implements IEventBasedEngine {
         }
     }
 
+    /// Simply Tooltips integration has not been ported to Fabric yet, so Epic Fight always draws its own tooltip.
     private boolean noSimplyTooltipsSupport(ItemTooltipEvent event) {
-        if (!ModPlatformProvider.get().isModLoaded(MinecraftMod.SIMPLY_TOOLTIPS.getModId())) {
-            return true;
-        }
-
-        ItemStack stack = event.getItemStack();
-        if (stack.isEmpty()) return true;
-
-        String namespace = BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace();
-        boolean isVanilla = namespace.equals("minecraft");
-        if (!isVanilla && !TooltipNavigationConfig.applyTooltipsToModItems()) return !ItemThemeRegistry.hasThemeForStack(stack);
-        if (isVanilla && !TooltipNavigationConfig.applyTooltipsToVanillaItems()) return !ItemThemeRegistry.hasThemeForStack(stack);
-
-        return !ItemThemeRegistry.hasThemeForStack(stack);
+        return true;
     }
 
     private void epicfight$itemTooltip(ItemTooltipEvent event) {
@@ -517,7 +505,7 @@ public class RenderEngine implements IEventBasedEngine {
 
                         Skill weaponInnateSkill = itemCapability.getInnateSkill(playerpatch, event.getItemStack());
                         if (weaponInnateSkill != null && noSimplyTooltipsSupport(event)) {
-                            event.getToolTip().add(Component.translatable("inventory.epicfight.guide_innate_tooltip", EpicFightKeyMappings.WEAPON_INNATE_SKILL_TOOLTIP.getKey().getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
+                            event.getToolTip().add(Component.translatable("inventory.epicfight.guide_innate_tooltip", FabricClientHooks.keyOf(EpicFightKeyMappings.WEAPON_INNATE_SKILL_TOOLTIP).getDisplayName()).withStyle(ChatFormatting.DARK_GRAY));
                         }
                     }
                 });
@@ -628,6 +616,11 @@ public class RenderEngine implements IEventBasedEngine {
         LocalPlayerPatch playerpatch = EpicFightCapabilities.getCachedLocalPlayerPatch();;
 
         if (playerpatch != null) {
+            // Epic Tweaks (embedded): fall back to the vanilla hand for non-combat motions
+            if (yesman.epicfight.tweaks.EpicTweaks.shouldRenderVanillaHand(playerpatch)) {
+                return;
+            }
+
             if (playerpatch.isEpicFightMode() && ClientConfig.enableAnimatedFirstPersonModel) {
                 RenderItemBase mainhandItemSkin = this.getItemRenderer(playerpatch.getOriginal().getMainHandItem());
                 RenderItemBase offhandItemSkin = this.getItemRenderer(playerpatch.getOriginal().getOffhandItem());
@@ -719,8 +712,15 @@ public class RenderEngine implements IEventBasedEngine {
     /**********************
      * Mod EventHook listeners
      **********************/
-    private void epicfight$addLayers(EntityRenderersEvent.AddLayers event) {
-        EntityRendererProvider.Context context = event.getContext();
+    public void epicfight$addLayers(EntityRendererProvider.Context context) {
+        yesman.epicfight.client.renderer.patched.layer.WearableItemLayer.clearModels();
+        yesman.epicfight.api.client.model.SoftBodyTranslatable.TRACKING_SIMULATION_SUBJECTS.removeIf(yesman.epicfight.api.client.physics.cloth.ClothSimulatable::invalid);
+
+        for (yesman.epicfight.api.client.physics.cloth.ClothSimulatable simOwner : yesman.epicfight.api.client.model.SoftBodyTranslatable.TRACKING_SIMULATION_SUBJECTS) {
+            simOwner.getClothSimulator().getAllRunningObjects().forEach((entry) -> {
+                simOwner.getClothSimulator().restart(entry.getKey());
+            });
+        }
 
         this.entityRendererProvider.clear();
         this.entityRendererProvider.put(EntityType.CREEPER, (entityType) -> new PCreeperRenderer(context, entityType).initLayerLast(context, entityType));
@@ -764,27 +764,27 @@ public class RenderEngine implements IEventBasedEngine {
      **********************/
 
     @Override
-    public void gameEventBus(IEventBus gameEventBus) {
-        gameEventBus.addListener(this::epicfight$bossEventProgress);
-        gameEventBus.addListener(this::epicfight$renderLivingPre);
-        gameEventBus.addListener(this::epicfight$itemTooltip);
-        gameEventBus.addListener(this::epicfight$computeCameraAngles);
-        gameEventBus.addListener(this::epicfight$renderGuiPre);
-        gameEventBus.addListener(this::epicfight$renderHand);
-        gameEventBus.addListener(this::epicfight$renderAfterLevel);
-        gameEventBus.addListener(this::epicfight$renderTickPre);
-        gameEventBus.addListener(this::epicfight$renderTickPost);
-        gameEventBus.addListener(this::epicfight$clientTick$Pre);
-        gameEventBus.addListener(this::epicfight$clientTick$Post);
-        gameEventBus.addListener(this::epicfight$levelTickPost);
-        gameEventBus.addListener(this::epicfight$renderBlockHighlight);
+    public void gameEventBus(SimpleEventBus gameEventBus) {
+        gameEventBus.addListener(CustomizeGuiOverlayEvent.BossEventProgress.class, this::epicfight$bossEventProgress);
+        gameEventBus.addListener(RenderLivingEvent.Pre.class, this::epicfight$renderLivingPre);
+        gameEventBus.addListener(ItemTooltipEvent.class, this::epicfight$itemTooltip);
+        gameEventBus.addListener(ViewportEvent.ComputeCameraAngles.class, this::epicfight$computeCameraAngles);
+        gameEventBus.addListener(RenderGuiEvent.Pre.class, this::epicfight$renderGuiPre);
+        gameEventBus.addListener(RenderHandEvent.class, this::epicfight$renderHand);
+        gameEventBus.addListener(RenderLevelStageEvent.class, this::epicfight$renderAfterLevel);
+        gameEventBus.addListener(RenderFrameEvent.Pre.class, this::epicfight$renderTickPre);
+        gameEventBus.addListener(RenderFrameEvent.Post.class, this::epicfight$renderTickPost);
+        gameEventBus.addListener(ClientTickEvent.Pre.class, this::epicfight$clientTick$Pre);
+        gameEventBus.addListener(ClientTickEvent.Post.class, this::epicfight$clientTick$Post);
+        gameEventBus.addListener(LevelTickEvent.Post.class, this::epicfight$levelTickPost);
+        gameEventBus.addListener(RenderHighlightEvent.Block.class, this::epicfight$renderBlockHighlight);
 
         EpicFightClientEventHooks.Render.RENDER_ENDER_DRAGON.registerEvent(this::epicfight$renderEnderDragon);
     }
 
     @Override
-    public void modEventBus(IEventBus modEventBus) {
-        modEventBus.addListener(this::epicfight$addLayers);
+    public void modEventBus(SimpleEventBus modEventBus) {
+        
     }
 
     /**

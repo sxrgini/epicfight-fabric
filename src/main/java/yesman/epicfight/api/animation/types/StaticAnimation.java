@@ -40,7 +40,8 @@ import yesman.epicfight.api.physics.ik.InverseKinematicsSimulator.InverseKinemat
 import yesman.epicfight.api.utils.datastructure.ParameterizedHashMap;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.RenderEngine;
 import yesman.epicfight.client.renderer.EpicFightRenderTypes;
 import yesman.epicfight.client.renderer.RenderingTool;
@@ -502,12 +503,12 @@ public class StaticAnimation extends DynamicAnimation implements InverseKinemati
         return (Optional<V>) Optional.ofNullable(this.properties.get(propertyType));
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public Layer.Priority getPriority() {
         return this.getProperty(ClientAnimationProperties.PRIORITY).orElse(Layer.Priority.LOWEST);
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public Layer.LayerType getLayerType() {
         return this.getProperty(ClientAnimationProperties.LAYER_TYPE).orElse(LayerType.BASE_LAYER);
     }
@@ -585,7 +586,7 @@ public class StaticAnimation extends DynamicAnimation implements InverseKinemati
         return this.accessor == null;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
         if (entitypatch instanceof InverseKinematicsSimulatable ikSimulatable) {
             this.getProperty(StaticAnimationProperty.BAKED_IK_DEFINITION).ifPresent((ikDefinitions) -> {

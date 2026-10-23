@@ -7,7 +7,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.client.input.InputManager;
 import yesman.epicfight.api.client.input.MovementDirection;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.input.InputUtils;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
@@ -19,7 +20,7 @@ public class KnockdownWakeupSkill extends DodgeSkill {
 		super(builder);
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void gatherArguments(SkillContainer container, ControlEngine controlEngine, CompoundTag arguments) {
 		LocalPlayerPatch executor = container.getClientExecutor();
 		LocalPlayer localPlayer = executor.getOriginal();

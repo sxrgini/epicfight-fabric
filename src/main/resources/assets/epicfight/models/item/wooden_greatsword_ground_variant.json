@@ -1,0 +1,6 @@
+{
+	"parent": "epicfight:item/greatsword",
+	"textures": {
+		"layer0": "epicfight:item/wooden_greatsword_gui"
+	}
+}

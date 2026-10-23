@@ -1,5 +1,7 @@
 package yesman.epicfight.registry.entries;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.UseAnim;
@@ -258,11 +260,11 @@ public class EpicFightMovesets
                     .addLivingMotionModifier(LivingMotions.AIM, Animations.BIPED_JAVELIN_AIM)
                     .addLivingMotionModifier(LivingMotions.SHOT, Animations.BIPED_JAVELIN_THROW)
                     .addInnateSkill((itemStack, playerPatch) -> {
-                        if (itemStack.getEnchantmentLevel(playerPatch.getLevel().holderOrThrow(Enchantments.RIPTIDE)) > 0) {
+                        if (NeoCompat.enchantmentLevel(itemStack, NeoCompat.holderOrThrow(playerPatch.getLevel(), Enchantments.RIPTIDE)) > 0) {
                             return EpicFightSkills.TSUNAMI.get();
-                        } else if (itemStack.getEnchantmentLevel(playerPatch.getLevel().holderOrThrow(Enchantments.CHANNELING)) > 0) {
+                        } else if (NeoCompat.enchantmentLevel(itemStack, NeoCompat.holderOrThrow(playerPatch.getLevel(), Enchantments.CHANNELING)) > 0) {
                             return EpicFightSkills.WRATHFUL_LIGHTING.get();
-                        } else if (itemStack.getEnchantmentLevel(playerPatch.getLevel().holderOrThrow(Enchantments.LOYALTY)) > 0) {
+                        } else if (NeoCompat.enchantmentLevel(itemStack, NeoCompat.holderOrThrow(playerPatch.getLevel(), Enchantments.LOYALTY)) > 0) {
                             return EpicFightSkills.EVERLASTING_ALLEGIANCE.get();
                         } else {
                             return EpicFightSkills.GRASPING_SPIRE.get();

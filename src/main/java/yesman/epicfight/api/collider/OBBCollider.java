@@ -18,7 +18,8 @@ import yesman.epicfight.api.model.Armature;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 public class OBBCollider extends Collider {
 	protected final Vec3[] modelVertices;
@@ -236,12 +237,12 @@ public class OBBCollider extends Collider {
 		return super.toString() + " worldCenter : " + this.worldCenter + " world direction : " + this.rotatedVertices[0];
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public RenderType getRenderType() {
 		return RenderType.lines();
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public void draw(PoseStack poseStack, MultiBufferSource buffer, int color) {
 		VertexConsumer vertexConsumer = buffer.getBuffer(this.getRenderType());
 		Matrix4f matrix = poseStack.last().pose();
@@ -315,7 +316,7 @@ public class OBBCollider extends Collider {
 		vertexConsumer.addVertex(matrix, v5x, v5y, v5z).setColor(color).setNormal(0.0F, 0.0F, 0.0F);
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void drawInternal(PoseStack poseStack, VertexConsumer vertexConsumer, Armature armature, Joint joint, Pose pose1, Pose pose2, float partialTicks, int color) {
 		OpenMatrix4f poseMatrix;
 		Pose interpolatedPose = Pose.interpolatePose(pose1, pose2, partialTicks);

@@ -7,9 +7,9 @@ import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.world.entity.SpawnPlacements;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
+import yesman.epicfight.platform.fabric.registry.DeferredRegister;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.world.entity.AreaEffectBreath;
 import yesman.epicfight.world.entity.DeathHarvestOrb;
@@ -53,7 +53,7 @@ public final class EpicFightEntityTypes {
 			.sized(0.0F, 0.0F).clientTrackingRange(6).updateInterval(1).noSummon().noSave().build("dodge_left")
 		);
 	
-	public static void registerSpawnPlacementsEvent(final RegisterSpawnPlacementsEvent event) {
-		event.register(WITHER_SKELETON_MINION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkAnyLightMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
+	public static void registerSpawnPlacements() {
+		SpawnPlacements.register(WITHER_SKELETON_MINION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkAnyLightMonsterSpawnRules);
     }
 }

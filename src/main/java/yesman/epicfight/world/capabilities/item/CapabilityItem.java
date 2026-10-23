@@ -1,5 +1,7 @@
 package yesman.epicfight.world.capabilities.item;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import com.google.common.collect.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -17,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.neoforged.fml.ModList;
+import yesman.epicfight.platform.ModPlatformProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.EpicFight;
@@ -80,7 +82,7 @@ public class CapabilityItem {
 	public static List<AttributeModifier> getAttributeModifiersAsWeapon(Holder<Attribute> attribute, EquipmentSlot slot, ItemStack itemstack, @Nullable LivingEntityPatch<?> entitypatch) {
 		List<AttributeModifier> attributeModifiers = Lists.newArrayList();
 		
-		itemstack.getAttributeModifiers().forEach(slot, (attribute$1, modifier) -> {
+		NeoCompat.attributeModifiers(itemstack).forEach(slot, (attribute$1, modifier) -> {
 			if (attribute$1 == attribute) {
 				attributeModifiers.add(modifier);
 			}
@@ -166,7 +168,7 @@ public class CapabilityItem {
 				double value = attribute.get(impact).amount() + entitypatch.getOriginal().getAttribute(impact).getBaseValue();
 
 				if (value > 0.0D) {
-					int i = itemStack.getEnchantmentLevel(entitypatch.getOriginal().level().holderOrThrow(Enchantments.KNOCKBACK));
+					int i = NeoCompat.enchantmentLevel(itemStack, NeoCompat.holderOrThrow(entitypatch.getOriginal().level(), Enchantments.KNOCKBACK));
 					value *= (1.0F + i * 0.12F);
 					itemTooltip.add(index++, Component.literal(" ").append(Component.translatable(impact.value().getDescriptionId() + ".value", ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(value))));
 				}
@@ -230,7 +232,7 @@ public class CapabilityItem {
 				double value = attribute.get(impact).amount() + entitypatch.getOriginal().getAttribute(impact).getBaseValue();
 
 				if (value > 0.0D) {
-					int i = itemstack.getEnchantmentLevel(entitypatch.getOriginal().level().holderOrThrow(Enchantments.KNOCKBACK));
+					int i = NeoCompat.enchantmentLevel(itemstack, NeoCompat.holderOrThrow(entitypatch.getOriginal().level(), Enchantments.KNOCKBACK));
 					value *= (1.0F + i * 0.12F);
 					itemTooltip.add(index++, Component.literal(" ").append(Component.translatable(impact.value().getDescriptionId() + ".value", ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(value))));
 				}
@@ -734,7 +736,7 @@ public class CapabilityItem {
 
 		public <R> T setCustomData(DeferredCustomData<? extends CustomData<R>> customData, R data) {
 			String modId = customData.getId().getNamespace();
-			if (!ModList.get().isLoaded(modId)) return (T) this;
+			if (!ModPlatformProvider.get().isModLoaded(modId)) return (T) this;
             this.setCustomDataInternal(customData, data);
 			return (T)this;
 		}

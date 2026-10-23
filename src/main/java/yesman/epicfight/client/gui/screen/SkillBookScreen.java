@@ -25,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.neoforged.neoforge.client.ClientHooks;
+import yesman.epicfight.platform.fabric.client.FabricClientHooks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import yesman.epicfight.api.client.event.EpicFightClientEventHooks;
@@ -76,7 +76,7 @@ public class SkillBookScreen extends Screen {
         WEAPON_CATEGORY_ICONS.put(WeaponCategories.LONGSWORD, new ItemStack(EpicFightItems.IRON_LONGSWORD.get()));
         WEAPON_CATEGORY_ICONS.put(WeaponCategories.DAGGER, new ItemStack(EpicFightItems.IRON_DAGGER.get()));
         WEAPON_CATEGORY_ICONS.put(WeaponCategories.SHIELD, new ItemStack(Items.SHIELD));
-        WEAPON_CATEGORY_ICONS.put(WeaponCategories.BOW, new ItemStack(Items.BOW));
+        WEAPON_CATEGORY_ICONS.put(WeaponCategories.RANGED, new ItemStack(Items.BOW));
 
         ATTRIBUTE_ICONS.put(Attributes.MAX_HEALTH, new TextureInfo(SKILLBOOK_BACKGROUND, 22, 195, 10, 10));
         ATTRIBUTE_ICONS.put(EpicFightAttributes.MAX_STAMINA, new TextureInfo(SKILLBOOK_BACKGROUND, 42, 195, 10, 10));
@@ -218,7 +218,7 @@ public class SkillBookScreen extends Screen {
             buttonMessage = GUI_WIDGET_SKILL_BOOK_UNUSABLE;
         }
 
-        this.learnButton =
+        this.learnButton = new LearnButton(
             Button.builder(
                 Component.translatable(buttonMessage),
                 button -> {
@@ -234,7 +234,7 @@ public class SkillBookScreen extends Screen {
             )
             .bounds(this.width / 2 + 54, this.height / 2 + 90, 67, 21)
             .tooltip(Tooltip.create(tooltip, null))
-            .build(LearnButton::new);
+        );
 
         if (isUsing || !meetsCondition) {
             this.learnButton.active = false;
@@ -331,7 +331,7 @@ public class SkillBookScreen extends Screen {
             window.setGuiScale(this.customScale);
 
             //Fix: expand extra far plane distance
-            Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, ClientHooks.getGuiFarPlane());
+            Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, FabricClientHooks.getGuiFarPlane());
             RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
 
             mouseX = (int)(mouseX * (originalScale / this.customScale));
@@ -399,7 +399,7 @@ public class SkillBookScreen extends Screen {
         // Recover the original projection matrix
         if (originalScale != this.customScale) {
             window.setGuiScale(originalScale);
-            Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, ClientHooks.getGuiFarPlane());
+            Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, FabricClientHooks.getGuiFarPlane());
             RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
         }
     }
@@ -666,7 +666,8 @@ public class SkillBookScreen extends Screen {
         );
 
         protected LearnButton(Builder builder) {
-            super(builder);
+            super(builder.x, builder.y, builder.width, builder.height, builder.message, builder.onPress, builder.createNarration);
+            this.setTooltip(builder.tooltip);
         }
 
         @Override
@@ -681,7 +682,7 @@ public class SkillBookScreen extends Screen {
             guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             guiGraphics.pose().popPose();
 
-            int i = this.getFGColor();
+            int i = (this.active ? 0xFFFFFF : 0xA0A0A0);
             this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
         }
     }

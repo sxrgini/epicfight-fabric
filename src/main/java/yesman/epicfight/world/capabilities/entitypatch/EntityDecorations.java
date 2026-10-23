@@ -8,7 +8,8 @@ import org.joml.Vector4f;
 import yesman.epicfight.api.client.animation.property.TrailInfo;
 import yesman.epicfight.api.event.IdentifierProvider;
 import yesman.epicfight.api.utils.math.Vec2i;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.renderer.EpicFightRenderTypes;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.world.capabilities.item.CapabilityItem;
@@ -186,7 +187,7 @@ public final class EntityDecorations {
         boolean generateParticles();
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public interface DecorationOverlay {
         ResourceLocation GENERIC = EpicFightMod.identifier("textures/common/white.png");
         Vector4f NO_COLOR = new Vector4f(1.0F);

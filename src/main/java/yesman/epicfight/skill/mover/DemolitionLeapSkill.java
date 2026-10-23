@@ -17,7 +17,8 @@ import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.utils.LevelUtil;
 import yesman.epicfight.api.utils.math.ValueModifier;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.gui.screen.SkillBookScreen;
 import yesman.epicfight.client.input.EpicFightKeyMappings;
@@ -107,7 +108,7 @@ public class DemolitionLeapSkill extends Skill implements ChargeableSkill {
 		container.getExecutor().resetHolding();
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void gatherHoldArguments(SkillContainer container, ControlEngine controlEngine, CompoundTag arguments) {
 		// Set player charging skill cause it won't be fired on feedback packet cause it jumped
 		controlEngine.setHoldingKey(SkillSlots.MOVER, this.getKeyMapping());
@@ -156,7 +157,7 @@ public class DemolitionLeapSkill extends Skill implements ChargeableSkill {
 		return 12;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public KeyMapping getKeyMapping() {
 		return EpicFightKeyMappings.MOVER_SKILL;
 	}
@@ -172,7 +173,7 @@ public class DemolitionLeapSkill extends Skill implements ChargeableSkill {
 		}
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean getCustomConsumptionTooltips(SkillBookScreen.AttributeIconList consumptionList) {
 		consumptionList.add(Component.translatable("attribute.name.epicfight.stamina.consume.tooltip"), Component.translatable("attribute.name.epicfight.stamina_per_second.consume", ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(this.consumption), "0.25"), SkillBookScreen.STAMINA_TEXTURE_INFO);
 		return true;

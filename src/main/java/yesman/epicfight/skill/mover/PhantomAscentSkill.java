@@ -19,7 +19,8 @@ import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.types.player.SkillCastEvent;
 import yesman.epicfight.api.utils.math.MathUtils;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.registry.entries.EpicFightSkillDataKeys;
@@ -162,7 +163,7 @@ public class PhantomAscentSkill extends Skill {
         return false;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public List<Object> getTooltipArgsOfScreen(List<Object> list) {
         list.add(this.extraJumps);
         return list;

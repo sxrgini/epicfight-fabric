@@ -1,5 +1,7 @@
 package yesman.epicfight.world.capabilities.entitypatch;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -21,7 +23,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.EventHooks;
+import yesman.epicfight.platform.fabric.FabricHooks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
@@ -40,7 +42,8 @@ import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.AttackResult.ResultType;
 import yesman.epicfight.api.utils.EntitySnapshot;
 import yesman.epicfight.api.utils.math.*;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.renderer.EpicFightRenderTypes;
 import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.gameasset.Armatures;
@@ -205,7 +208,7 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
         this.tickMirrorBlend();
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void entityPairing(SPEntityPairingPacket packet) {
         super.entityPairing(packet);
 
@@ -357,7 +360,7 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
     public void cancelItemUse() {
         if (this.original.isUsingItem()) {
             this.original.stopUsingItem();
-            EventHooks.onUseItemStop(this.original, this.original.getUseItem(), this.original.getUseItemRemainingTicks());
+            FabricHooks.onUseItemStop(this.original, this.original.getUseItem(), this.original.getUseItemRemainingTicks());
         }
     }
 
@@ -862,7 +865,7 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
         return (A) this.animator;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public ClientAnimator getClientAnimator() {
         return this.getAnimator();
     }
@@ -913,11 +916,11 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
 
         if (hand == InteractionHand.MAIN_HAND) {
             impact = (float)this.original.getAttributeValue(EpicFightAttributes.IMPACT);
-            i = this.getOriginal().getMainHandItem().getEnchantmentLevel(this.getLevel().registryAccess().holderOrThrow(Enchantments.KNOCKBACK));
+            i = NeoCompat.enchantmentLevel(this.getOriginal().getMainHandItem(), NeoCompat.holderOrThrow(this.getLevel().registryAccess(), Enchantments.KNOCKBACK));
         } else {
             if (this.isOffhandItemValid()) {
                 impact = (float)this.original.getAttributeValue(EpicFightAttributes.OFFHAND_IMPACT);
-                i = this.getOriginal().getOffhandItem().getEnchantmentLevel(this.getLevel().registryAccess().holderOrThrow(Enchantments.KNOCKBACK));
+                i = NeoCompat.enchantmentLevel(this.getOriginal().getOffhandItem(), NeoCompat.holderOrThrow(this.getLevel().registryAccess(), Enchantments.KNOCKBACK));
             } else {
                 impact = (float)this.original.getAttribute(EpicFightAttributes.IMPACT).getBaseValue();
             }
@@ -1076,7 +1079,7 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
             return true;
         }
 
-        if (this.original.getRootVehicle() == target.getRootVehicle() && !target.canRiderInteract()) {
+        if (this.original.getRootVehicle() == target.getRootVehicle() && true) {
             return true;
         }
 
@@ -1243,7 +1246,7 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends Hurtable
         return this.eventListener;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public EntitySnapshot<?> captureEntitySnapshot() {
         return EntitySnapshot.captureLivingEntity(this);
     }

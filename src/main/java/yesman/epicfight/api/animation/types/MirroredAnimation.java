@@ -10,7 +10,8 @@ import yesman.epicfight.api.client.animation.Layer;
 import yesman.epicfight.api.client.animation.property.ClientAnimationProperties;
 import yesman.epicfight.api.client.animation.property.JointMaskEntry;
 import yesman.epicfight.api.model.Armature;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.world.capabilities.entitypatch.LivingEntityPatch;
 
 import java.util.List;
@@ -99,12 +100,12 @@ public class MirroredAnimation extends StaticAnimation {
         return own.isPresent() ? own : this.source.get().getProperty(propertyType);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public Layer.Priority getPriority() {
         return this.getProperty(ClientAnimationProperties.PRIORITY).orElseGet(() -> this.source.get().getPriority());
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public Layer.LayerType getLayerType() {
         return this.getProperty(ClientAnimationProperties.LAYER_TYPE).orElseGet(() -> this.source.get().getLayerType());
     }

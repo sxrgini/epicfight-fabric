@@ -7,7 +7,8 @@ import yesman.epicfight.api.animation.types.DynamicAnimation;
 import yesman.epicfight.api.animation.types.EntityState;
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.network.EntityPairingPacketTypes;
 import yesman.epicfight.network.EpicFightNetworkManager;
 import yesman.epicfight.network.server.SPEntityPairingPacket;
@@ -132,13 +133,13 @@ public class EmergencyEscapeSkill extends PassiveSkill {
         EpicFightNetworkManager.sendToAllPlayerTrackingThisEntityWithSelf(pairingPacket, container.getServerExecutor().getOriginal());
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean shouldDraw(SkillContainer container) {
         return container.getStack() == 0;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     @Override
     public List<Object> getTooltipArgsOfScreen(List<Object> list) {
         list.add(String.format("%.1f", this.consumption));

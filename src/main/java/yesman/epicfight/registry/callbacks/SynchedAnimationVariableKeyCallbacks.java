@@ -2,8 +2,8 @@ package yesman.epicfight.registry.callbacks;
 
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.Registry;
-import net.neoforged.neoforge.registries.callback.BakeCallback;
-import net.neoforged.neoforge.registries.callback.ClearCallback;
+import yesman.epicfight.platform.fabric.registry.callback.BakeCallback;
+import yesman.epicfight.platform.fabric.registry.callback.ClearCallback;
 import yesman.epicfight.api.animation.SynchedAnimationVariableKey;
 import yesman.epicfight.api.utils.datastructure.ClearableIdMapper;
 
@@ -23,7 +23,8 @@ public class SynchedAnimationVariableKeyCallbacks implements BakeCallback<Synche
 	
 	@Override
 	public void onBake(Registry<SynchedAnimationVariableKey<?>> registry) {
-		registry.forEach(ID_MAPPER::add);
+		// Sorted by name so ids stay identical between server and client regardless of registry sync remapping
+		registry.keySet().stream().sorted().forEach(id -> ID_MAPPER.add(registry.get(id)));
 	}
 	
 	public static IdMapper<SynchedAnimationVariableKey<?>> getIdMap() {

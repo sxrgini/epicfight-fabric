@@ -24,7 +24,8 @@ import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.types.entity.TakeDamageEvent;
 import yesman.epicfight.api.event.types.player.SkillCancelEvent;
 import yesman.epicfight.api.utils.AttackResult;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.client.gui.screen.SkillBookScreen;
@@ -272,7 +273,7 @@ public class GuardSkill extends Skill implements HoldableSkill {
 		EpicFightNetworkManager.sendToAllPlayerTrackingThisEntity(SPSetSkillContainerValue.activate(skillContainer.getSlot(), false, skillContainer.getExecutor().getOriginal().getId()), skillContainer.getExecutor().getOriginal());
 	}
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
 	public void cancelOnClient(SkillContainer container, CompoundTag arguments) {
 		super.cancelOnClient(container, arguments);
 		container.deactivate();
@@ -302,7 +303,7 @@ public class GuardSkill extends Skill implements HoldableSkill {
 		container.deactivate();
 	}
 	
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
 	public KeyMapping getKeyMapping() {
 		return EpicFightKeyMappings.GUARD;
 	}
@@ -402,10 +403,10 @@ public class GuardSkill extends Skill implements HoldableSkill {
 		return container.getDataManager().getDataValue(EpicFightSkillDataKeys.PENALTY) > 0.0F;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
 		guiGraphics.blit(EpicFightSkills.GUARD.get().getSkillTexture(), (int)x, (int)y, 24, 24, 0, 0, 1, 1, 1, 1);
-		guiGraphics.drawString(gui.getFont(), String.format("x%.1f", container.getDataManager().getDataValue(EpicFightSkillDataKeys.PENALTY)), x, y + 6, 16777215, true);
+		yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), String.format("x%.1f", container.getDataManager().getDataValue(EpicFightSkillDataKeys.PENALTY)), x, y + 6, 16777215, true);
 	}
 	
 	
@@ -418,7 +419,7 @@ public class GuardSkill extends Skill implements HoldableSkill {
 		return this.guardMotions.keySet();
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public boolean getCustomConsumptionTooltips(SkillBookScreen.AttributeIconList consumptionList) {
 		consumptionList.add(Component.translatable("attribute.name.epicfight.stamina.consume.tooltip"), Component.translatable("skill.epicfight.guard.consume.tooltip"), SkillBookScreen.STAMINA_TEXTURE_INFO);
 		return true;

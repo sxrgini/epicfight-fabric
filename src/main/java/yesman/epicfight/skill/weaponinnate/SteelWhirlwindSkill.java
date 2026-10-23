@@ -13,7 +13,8 @@ import yesman.epicfight.api.client.event.EpicFightClientEventHooks;
 import yesman.epicfight.api.client.input.InputManager;
 import yesman.epicfight.api.client.input.PlayerInputState;
 import yesman.epicfight.api.event.EntityEventListener;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.events.engine.ControlEngine;
 import yesman.epicfight.client.input.EpicFightKeyMappings;
 import yesman.epicfight.gameasset.Animations;
@@ -118,7 +119,7 @@ public class SteelWhirlwindSkill extends WeaponInnateSkill implements Chargeable
         ChargeableSkill.super.holdTick(container);
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public KeyMapping getKeyMapping() {
         return EpicFightKeyMappings.WEAPON_INNATE_SKILL;
     }

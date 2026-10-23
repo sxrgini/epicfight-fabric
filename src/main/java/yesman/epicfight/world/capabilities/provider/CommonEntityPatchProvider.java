@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import yesman.epicfight.api.event.EpicFightEventHooks;
 import yesman.epicfight.api.event.types.registry.EntityPatchRegistryEvent;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.AbstractClientPlayerPatch;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.main.EpicFightMod;
@@ -162,7 +163,7 @@ public final class CommonEntityPatchProvider {
         return null;
     }
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
     public static class ClientModule {
         public static void registerClientPlayerPatches() {
             INSTANCE.capabilities.put(EntityType.PLAYER, entity -> switch (entity) {

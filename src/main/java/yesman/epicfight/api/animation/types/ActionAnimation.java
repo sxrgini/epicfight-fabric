@@ -24,7 +24,8 @@ import yesman.epicfight.api.utils.TimePairList;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.main.EpicFightSharedConstants;
 import yesman.epicfight.network.EpicFightNetworkManager;
@@ -384,7 +385,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		return move.toDoubleVector();
 	}
 
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public boolean shouldPlayerMove(LocalPlayerPatch playerpatch) {
 		return playerpatch.isLogicalClient();
 	}

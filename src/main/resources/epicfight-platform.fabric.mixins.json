@@ -1,0 +1,36 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_21",
+  "package": "yesman.epicfight.platform.fabric.mixin",
+  "client": [
+    "client.MixinFabricLivingEntityRenderer",
+    "client.MixinFabricGameRenderer",
+    "client.MixinFabricItemInHandRenderer",
+    "client.MixinFabricBossHealthOverlay",
+    "client.MixinFabricMinecraft",
+    "client.MixinFabricKeyMapping",
+    "client.MixinFabricItemRenderer",
+    "client.MixinFabricLocalPlayer",
+    "client.MixinFabricEntityRenderDispatcher",
+    "client.MixinFabricClientLevel",
+    "client.MixinFabricClientPacketListener",
+    "client.MixinFabricGui"
+  ],
+  "mixins": [
+    "MixinEntityPatchHolder",
+    "MixinFabricHolderReference",
+    "MixinFabricLivingEntity",
+    "MixinFabricEntity",
+    "MixinFabricServerLevel",
+    "MixinFabricEnderMan",
+    "MixinFabricProjectile",
+    "MixinFabricItemStack",
+    "MixinFabricBowItem",
+    "MixinFabricPlayerDataStorage",
+    "MixinFabricLootTable"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

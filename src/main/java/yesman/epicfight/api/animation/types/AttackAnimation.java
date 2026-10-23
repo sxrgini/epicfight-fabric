@@ -15,8 +15,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.entity.PartEntity;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.entity.boss.EnderDragonPart;
+import yesman.epicfight.platform.fabric.registry.DeferredHolder;
 import yesman.epicfight.api.animation.AnimationManager.AnimationAccessor;
 import yesman.epicfight.api.animation.AnimationPlayer;
 import yesman.epicfight.api.animation.AnimationVariables;
@@ -36,7 +36,8 @@ import yesman.epicfight.api.utils.AttackResult;
 import yesman.epicfight.api.utils.HitEntityList;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.ValueModifier;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.main.EpicFightSharedConstants;
 import yesman.epicfight.particle.HitParticleType;
 import yesman.epicfight.world.capabilities.entitypatch.HumanoidMobPatch;
@@ -233,7 +234,7 @@ public class AttackAnimation extends ActionAnimation {
 				LivingEntity trueEntity = this.getTrueEntity(target);
 				
 				if (trueEntity != null && trueEntity.isAlive() && !entitypatch.getCurrentlyAttackTriedEntities().contains(trueEntity) && !entitypatch.isTargetInvulnerable(target)) {
-					if (target instanceof LivingEntity || target instanceof PartEntity) {
+					if (target instanceof LivingEntity || target instanceof EnderDragonPart) {
 						AABB aabb = target.getBoundingBox();
 						
 						if (MathUtils.canBeSeen(target, entity, target.position().distanceTo(entity.getEyePosition()) + aabb.getCenter().distanceTo(new Vec3(aabb.maxX, aabb.maxY, aabb.maxZ)))) {
@@ -269,8 +270,8 @@ public class AttackAnimation extends ActionAnimation {
 	public LivingEntity getTrueEntity(Entity entity) {
 		if (entity instanceof LivingEntity livingEntity) {
 			return livingEntity;
-		} else if (entity instanceof PartEntity<?> partEntity) {
-			Entity parentEntity = partEntity.getParent();
+		} else if (entity instanceof EnderDragonPart partEntity) {
+			Entity parentEntity = partEntity.parentMob;
 			
 			if (parentEntity instanceof LivingEntity livingEntity) {
 				return livingEntity;
@@ -408,7 +409,7 @@ public class AttackAnimation extends ActionAnimation {
 		return val;
 	}
 	
-	@Override @ClientOnly
+	@Override @Environment(EnvType.CLIENT)
 	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playbackTime, float partialTicks) {
         AnimationPlayer animPlayer = entitypatch.getAnimator().getPlayerFor(this.getAccessor());
         if (animPlayer == null) {

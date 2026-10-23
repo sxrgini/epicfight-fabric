@@ -1,5 +1,7 @@
 package yesman.epicfight.api.animation.property;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import java.util.Optional;
 
 import net.minecraft.core.BlockPos;
@@ -82,7 +84,7 @@ public class MoveCoordFunctions {
 		BlockState blockState = livingentity.level().getBlockState(blockpos);
 		AttributeInstance movementSpeed = livingentity.getAttribute(Attributes.MOVEMENT_SPEED);
 		
-		boolean soulboost = blockState.is(BlockTags.SOUL_SPEED_BLOCKS) && EnchantmentHelper.getEnchantmentLevel(livingentity.level().holderOrThrow(Enchantments.SOUL_SPEED), livingentity) > 0;
+		boolean soulboost = blockState.is(BlockTags.SOUL_SPEED_BLOCKS) && EnchantmentHelper.getEnchantmentLevel(NeoCompat.holderOrThrow(livingentity.level(), Enchantments.SOUL_SPEED), livingentity) > 0;
 		float speedFactor = (float)(soulboost ? 1.0D : livingentity.level().getBlockState(blockpos).getBlock().getSpeedFactor());
 		float moveMultiplier = (float)(animation.getProperty(ActionAnimationProperty.AFFECT_SPEED).orElse(false) ? (movementSpeed.getValue() / movementSpeed.getBaseValue()) : 1.0F);
 		

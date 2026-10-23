@@ -34,7 +34,8 @@ import yesman.epicfight.api.utils.EntitySnapshot;
 import yesman.epicfight.api.utils.math.MathUtils;
 import yesman.epicfight.api.utils.math.OpenMatrix4f;
 import yesman.epicfight.api.utils.math.Vec3f;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.online.EpicSkins;
 import yesman.epicfight.config.ClientConfig;
 import yesman.epicfight.gameasset.Animations;
@@ -265,7 +266,7 @@ public class AbstractClientPlayerPatch<T extends AbstractClientPlayer> extends P
         });
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void entityPairing(SPEntityPairingPacket packet) {
         super.entityPairing(packet);
 
@@ -371,7 +372,7 @@ public class AbstractClientPlayerPatch<T extends AbstractClientPlayer> extends P
             BlockState blockstate = this.original.getInBlockState();
             float yRot = 0.0F;
 
-            if (blockstate.isBed(this.original.level(), this.original.getSleepingPos().orElse(null), this.original)) {
+            if (blockstate.getBlock() instanceof net.minecraft.world.level.block.BedBlock) {
                 if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
                     switch(blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
                     case EAST:

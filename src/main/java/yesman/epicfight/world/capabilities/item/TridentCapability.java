@@ -1,5 +1,7 @@
 package yesman.epicfight.world.capabilities.item;
 
+import yesman.epicfight.platform.fabric.NeoCompat;
+
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -66,11 +68,11 @@ public class TridentCapability extends RangedWeaponCapability {
     @Nullable
     @Override
     public Skill getInnateSkill(PlayerPatch<?> playerpatch, ItemStack itemstack) {
-        if (itemstack.getEnchantmentLevel(playerpatch.getLevel().holderOrThrow(Enchantments.RIPTIDE)) > 0) {
+        if (NeoCompat.enchantmentLevel(itemstack, NeoCompat.holderOrThrow(playerpatch.getLevel(), Enchantments.RIPTIDE)) > 0) {
             return EpicFightSkills.TSUNAMI.get();
-        } else if (itemstack.getEnchantmentLevel(playerpatch.getLevel().holderOrThrow(Enchantments.CHANNELING)) > 0) {
+        } else if (NeoCompat.enchantmentLevel(itemstack, NeoCompat.holderOrThrow(playerpatch.getLevel(), Enchantments.CHANNELING)) > 0) {
             return EpicFightSkills.WRATHFUL_LIGHTING.get();
-        } else if (itemstack.getEnchantmentLevel(playerpatch.getLevel().holderOrThrow(Enchantments.LOYALTY)) > 0) {
+        } else if (NeoCompat.enchantmentLevel(itemstack, NeoCompat.holderOrThrow(playerpatch.getLevel(), Enchantments.LOYALTY)) > 0) {
             return EpicFightSkills.EVERLASTING_ALLEGIANCE.get();
         } else {
             return null;

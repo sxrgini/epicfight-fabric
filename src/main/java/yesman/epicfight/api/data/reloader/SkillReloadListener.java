@@ -13,7 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.world.capabilites.entitypatch.player.LocalPlayerPatch;
 import yesman.epicfight.main.EpicFightMod;
 import yesman.epicfight.network.server.SPDatapackSync;
@@ -68,7 +69,7 @@ public class SkillReloadListener extends SimpleJsonResourceReloadListener {
 		EpicFightRegistries.SKILL.holders().map(Holder::value).forEach((skill) -> skill.registerPropertiesToAnimation());
 	}
 	
-    @ClientOnly
+    @Environment(EnvType.CLIENT)
 	public static void processServerPacket(SPDatapackSync packet) {
 		for (CompoundTag tag : packet.tags()) {
 			if (!EpicFightRegistries.SKILL.containsKey(ResourceLocation.parse(tag.getString("id")))) {

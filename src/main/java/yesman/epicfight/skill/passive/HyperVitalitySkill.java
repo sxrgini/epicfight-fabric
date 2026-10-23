@@ -6,7 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import yesman.epicfight.api.event.EntityEventListener;
 import yesman.epicfight.api.event.EpicFightEventHooks;
-import yesman.epicfight.api.utils.side.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import yesman.epicfight.client.gui.BattleModeGui;
 import yesman.epicfight.client.gui.screen.SkillBookScreen;
 import yesman.epicfight.network.EntityPairingPacketTypes;
@@ -80,7 +81,7 @@ public class HyperVitalitySkill extends PassiveSkill {
         );
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void executeOnClient(SkillContainer container, CompoundTag arguments) {
         super.executeOnClient(container, arguments);
         container.activate();
@@ -97,17 +98,17 @@ public class HyperVitalitySkill extends PassiveSkill {
         return this.isActivated(container) || container.getStack() == 0;
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public void drawOnGui(BattleModeGui gui, SkillContainer container, GuiGraphics guiGraphics, float x, float y, float partialTick) {
         guiGraphics.blit(this.getSkillTexture(), (int)x, (int)y, 24, 24, 0, 0, 1, 1, 1, 1);
 
         if (!this.isActivated(container)) {
             String remainTime = String.format("%.0f", container.getMaxResource() - container.getResource());
-            guiGraphics.drawString(gui.getFont(), remainTime, (x + 12 - 4 * (remainTime.length())), y + 6, 16777215, true);
+            yesman.epicfight.client.gui.GuiGraphicsExt.drawString(guiGraphics, gui.getFont(), remainTime, (x + 12 - 4 * (remainTime.length())), y + 6, 16777215, true);
         }
     }
 
-    @Override @ClientOnly
+    @Override @Environment(EnvType.CLIENT)
     public boolean getCustomConsumptionTooltips(SkillBookScreen.AttributeIconList consumptionList) {
         consumptionList.add(Component.translatable("attribute.name.epicfight.stamina.consume.tooltip"), Component.translatable("skill.epicfight.hypervitality.consume.tooltip"), SkillBookScreen.STAMINA_TEXTURE_INFO);
         return true;
